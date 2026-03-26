@@ -1,0 +1,34 @@
+Last Updated,3/23/2026,,,,,,
+Start Month,Start Quarter,[End of Period] Total AM ICs,[End of Period] AM 1st & 2nd Line,[TARGET] Total AM ICs,[TARGET] AM 1st & 2nd Line,[ACTUAL] Total AM ICs,[ACTUAL] AM 1st & 2nd Line
+2026 - 1,FY25 Q4,2,1,,,0,0
+2026 - 2,FY26 Q1,12,1,10,0,1,0
+2026 - 3,FY26 Q1,13,2,1,0,1,0
+2026 - 4,FY26 Q1,15,2,2,0,0,0
+2026 - 5,FY26 Q2,18,2,3,0,0,0
+2026 - 6,FY26 Q2,20,3,2,0,0,0
+2026 - 7,FY26 Q2,23,3,3,0,0,0
+2026 - 8,FY26 Q3,27,3,4,0,0,0
+2026 - 9,FY26 Q3,31,4,4,1,0,0
+2026 - 10,FY26 Q3,36,4,5,1,0,0
+2026 - 11,FY26 Q4,40,5,4,0,0,0
+2026 - 12,FY26 Q4,46,6,6,1,0,0
+2027 - 1,FY26 Q4,53,6,7,1,0,0
+2027 - 2,FY27 Q1,60,7,7,1,0,0
+2027 - 3,FY27 Q1,67,8,7,1,0,0
+2027 - 4,FY27 Q1,76,9,9,1,0,0
+2027 - 5,FY27 Q2,85,10,9,1,0,0
+2027 - 6,FY27 Q2,95,11,10,1,0,0
+2027 - 7,FY27 Q2,106,13,11,1,0,0
+2027 - 8,FY27 Q3,113,14,7,1,0,0
+2027 - 9,FY27 Q3,125,15,12,1,0,0
+2027 - 10,FY27 Q3,137,16,12,1,0,0
+2027 - 11,FY27 Q4,150,18,13,2,0,0
+2027 - 12,FY27 Q4,164,20,14,2,0,0
+2028 - 1,FY27 Q4,178,21,14,2,0,0
+,,,,,,,
+Source: Target,https://docs.google.com/spreadsheets/d/1mvMjKwhHs-CsRg4x6zA9C6FtXkKvQIN90dQMjLK5V6Y/edit?gid=0#gid=0,,,,,,
+Source: Actual ,https://docs.google.com/spreadsheets/d/19CgexAPGLU36O4dFZGwhDI-Z81-Q2KPgrQou-KpPUMU/edit?gid=0#gid=0,,,,,,
+,,,,,,,
+,,,,,,,
+Notes,Only active AEs ,,,,,,
+,Based on effective start date,,,,,,

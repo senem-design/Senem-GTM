@@ -1,0 +1,96 @@
+Employee Name,Status,Start Date,End Date,Title,Manager,Effective Start Month for Ramp
+Matthew Brown,Active,1/20/2025,,Account Executive,Mark Ebert,2/1/2025
+Benjamin Grosse,Active,1/27/2025,,Account Executive,Mark Ebert,2/1/2025
+Charles Demuth,Active,1/27/2025,,"Manager, Enterprise Sales",Mark Ebert,2/1/2025
+Conner Walker,Terminated,3/6/2025,3/31/2025,GTM Analyst,Joseph Turtel,3/1/2025
+Willie Goetz,Active,4/21/2025,,Mid-Market Account Executive,Scott Schachter,5/1/2025
+Nick Usanov,Active,4/28/2025,,Engagement Manager,Carlos Hernandez,5/1/2025
+Harrison MacLean,Active,4/28/2025,,Agent Engineer,James Underhill,5/1/2025
+Sapphira Ching,Active,5/5/2025,,Revenue Engagement Manager,Carlos Hernandez,5/1/2025
+Rachel Seipp,Active,5/27/2025,,Engagement Manager,Carlos Hernandez,6/1/2025
+Connor Joyce,Active,5/27/2025,,Account Executive,Charles Demuth,6/1/2025
+Hugo Howard,Active,6/16/2025,,Account Executive,Charles Demuth,7/1/2025
+Joanie Sanders,Active,6/30/2025,,Agency Partnerships Lead,Mark Ebert,7/1/2025
+Lilly Juliano,Active,7/28/2025,,Account Executive,Charles Demuth,8/1/2025
+Brendan Jackson,Active,7/28/2025,,Mid-Market Account Executive,Scott Schachter,8/1/2025
+Kendal Seymore,Active,7/30/2025,,Engagement Manager,Carlos Hernandez,8/1/2025
+Matt Haley,Active,8/4/2025,,Enterprise Account Executive,Mark Ebert,8/1/2025
+Sasidhar Vankina,Active,8/4/2025,,Engagement Manager,Brooke Winfield,8/1/2025
+Mark Ebert,Active,8/11/2025,,"Senior Vice President, Revenue",James Cadwallader,8/1/2025
+Ben Segal,Active,8/25/2025,,Customer Strategy Lead,Carlos Hernandez,9/1/2025
+Nate Sagett,Active,9/2/2025,,Account Executive,Mark Ebert,9/1/2025
+Hana Hajebian,Active,9/2/2025,,"Manager, Solutions Consulting",Mark Ebert,9/1/2025
+Sophie Piacentini,Active,9/8/2025,,Mid-Market Account Executive,Scott Schachter,9/1/2025
+Matthew Taylor,Active,9/10/2025,,Account Executive,Mark Ebert,9/1/2025
+Brooke Winfield,Active,9/15/2025,,"Manager, Account Management",Carlos Hernandez,10/1/2025
+Ron Neugold,Active,9/15/2025,,Account Executive,Charles Demuth,10/1/2025
+Jessica Cunningham,Active,9/22/2025,,Account Executive,Charles Demuth,10/1/2025
+Nick Phillips,Active,9/22/2025,,Lead Sales Development Representative,Mark Ebert,10/1/2025
+James Underhill,Active,9/22/2025,,Head of Product-Led GTM & Ops,James Cadwallader,10/1/2025
+Jess Kommor,Active,9/29/2025,,Mid-Market Account Executive,Scott Schachter,10/1/2025
+Christie Ray Harrison,Active,9/29/2025,,"Manager, Agency Engagement",Carlos Hernandez,10/1/2025
+Luke Lotardo,Terminated,9/29/2025,1/9/2026,Implementation Manager,Carlos Hernandez,10/1/2025
+Jack Gallo,Active,10/13/2025,,Revenue Operations,James Underhill,10/1/2025
+Carlos Hernandez,Active,10/21/2025,,Head of Customer Success,James Cadwallader,11/1/2025
+Juan Diego Campuzano,Active,10/27/2025,,GTM Associate,Mark Ebert,11/1/2025
+George Rafey,Active,10/27/2025,,GTM Associate,Mark Ebert,11/1/2025
+Edgar Sze,Active,10/28/2025,,GTM Engineer,James Underhill,11/1/2025
+Kree Zhang,Active,10/29/2025,,Engagement Manager,Carlos Hernandez,11/1/2025
+Sarah Herman,Active,11/3/2025,,Engagement Manager,Brooke Winfield,11/1/2025
+Jonathan Cox,Terminated,11/3/2025,12/19/2025,Account Executive,Mark Ebert,11/1/2025
+Ravi Patel,Active,11/10/2025,,"Director, Enterprise Sales",Mark Ebert,11/1/2025
+Ryan Jones,Active,11/12/2025,,Account Executive,Charles Demuth,11/1/2025
+Ben Morriss,Active,11/13/2025,,Enterprise Account Executive,Mark Ebert,11/1/2025
+Johanna Murphy,Terminated,12/1/2025,3/18/2026,Engagement Manager,Carlos Hernandez,12/1/2025
+Sean Konchan,Active,12/9/2025,,Account Manager,Brooke Winfield,12/1/2025
+John Henry Slonieski,Active,12/15/2025,,GTM Associate,Mark Ebert,1/1/2026
+Nikki Lebedin,Active,12/16/2025,,Mid-Market Account Executive,Scott Schachter,1/1/2026
+Dan Cannata,Terminated,1/1/2026,1/9/2026,Senior Account Executive,Mark Ebert,1/1/2026
+Erik Binkowski,Active,1/12/2026,,Engagement Manager,Carlos Hernandez,1/1/2026
+Rich Murphy,Active,1/12/2026,,Enterprise Account Executive,Mark Ebert,1/1/2026
+Chris Carey,Active,1/19/2026,,Account Manager,Brooke Winfield,2/1/2026
+Joe Long,Active,1/20/2026,,GTM Associate,Mark Ebert,2/1/2026
+Alaina Brotman,Active,2/2/2026,,Engagement Manager,Christie Ray Harrison,2/1/2026
+James Boseley,Active,2/2/2026,,Account Executive,Mark Ebert,2/1/2026
+Scott Cullinane,Active,2/2/2026,,GTM Associate,Mark Ebert,2/1/2026
+Lucy Cross,Active,2/9/2026,,Engagement Manager,Carlos Hernandez,2/1/2026
+Nico Savini,Active,2/9/2026,,Engagement Manager,Christie Ray Harrison,2/1/2026
+Ryan Enger,Active,2/9/2026,,GTM Associate,Mark Ebert,2/1/2026
+Mujahid Robinson,Active,2/9/2026,,Engagement Manager,Christie Ray Harrison,2/1/2026
+Elizabeth Braha,Active,2/9/2026,,Engagement Manager,Carlos Hernandez,2/1/2026
+Emma Mayo,Active,2/9/2026,,Engagement Manager,Carlos Hernandez,2/1/2026
+Santiago Tomatis,Active,2/9/2026,,Information Security,Jack Gallo,2/1/2026
+James Hughes,Active,2/10/2026,,GTM Associate,Mark Ebert,2/1/2026
+Melissa Putterman,Active,2/11/2026,,Mid-Market Account Executive,Scott Schachter,2/1/2026
+Reda Benyass,Active,2/16/2026,,Engagement Associate,Carlos Hernandez,3/1/2026
+Sean Clademenos,Active,2/16/2026,,Account Manager,Brooke Winfield,3/1/2026
+Mike Tang,Active,2/18/2026,,Enterprise Account Executive,Charles Demuth,3/1/2026
+Akhil Chauhan,Terminated,2/18/2026,2/18/2026,UK SC Senior,Hana Hajebian,3/1/2026
+Jesse Ssengonzi,Active,2/23/2026,,GTM Associate,Mark Ebert,3/1/2026
+Mason Alexander,Active,2/23/2026,,Engagement Manager,Carlos Hernandez,3/1/2026
+Scott Schachter,Active,3/2/2026,,Mid-Market Sales Manager,Mark Ebert,3/1/2026
+Lydia McGrath,Active,3/2/2026,,Engagement Manager,Carlos Hernandez,3/1/2026
+Isabela Pacheco,Active,3/2/2026,,Engagement Associate,Carlos Hernandez,3/1/2026
+Aislinn Sullivan,Active,3/2/2026,,GTM Associate,Mark Ebert,3/1/2026
+Saga Torseke,Active,3/30/2026,,Enterprise Account Executive,Mark Ebert,4/1/2026
+Claudia Graves,Active,3/3/2026,,Mid-Market Account Executive,Mark Ebert,3/1/2026
+Beth Krikorian,Active,3/9/2026,,Engagement Manager,Carlos Hernandez,3/1/2026
+Senem Bilir,Active,3/16/2026,,GTM Operations,James Underhill,4/1/2026
+Bipan Sarker,Active,3/16/2026,,Engagement Manager,Carlos Hernandez,4/1/2026
+Ayush Sharma,Active,3/16/2026,,GTM Engineer,James Underhill,4/1/2026
+Tessa McManus,Active,3/11/2026,,"Senior Manager, Mid-Market Sales",Mark Ebert,3/1/2026
+Arya Barot,Signed,3/23/2026,,Marketing Agent Engineer,James Underhill,4/1/2026
+Phillip Wang,Signed,3/23/2026,,GTM Strategy & Operations ,James Underhill,4/1/2026
+Matthew Solone,Signed,3/30/2026,,Agent Engineer,James Underhill,4/1/2026
+Jack Fairfield,Signed,3/30/2026,,Mid-Market Account Executive,Scott Schacter,4/1/2026
+Mike Joyce,Signed,4/1/2026,,Enterprise Account Executive,Charlie Demuth,4/1/2026
+Rachel Feidelman,Signed,4/1/2026,,Solutions Consultant,Hana Hajebian,4/1/2026
+Alec Dolton,Signed,4/1/2026,,Enterprise Account Executive,Charlie Demuth,4/1/2026
+Claire Vandenberg,Signed,4/6/2026,,"Engagement Manager, Enterprise",,4/1/2026
+Alia Hakki,Signed,4/6/2026,,Engagement Manager,,4/1/2026
+Sam McKeown,Signed,4/6/2026,,"Engagement Manager, Enterprise",,4/1/2026
+Joseph Ferguson,Signed,4/7/2026,,Mid-Market Account Executive,,4/1/2026
+Carolyn Williamson,Signed,4/7/2026,,Mid-Market Account Executive,,4/1/2026
+Mounika Adepu,Signed,4/10/2026,,Agent Engineer,,4/1/2026
+Asa Wold,Signed,4/17/2026,,GTM Associate,Nick Phillips,5/1/2026
+Marissa Ferrara,Signed,4/20/2026,,"Engagement Manager, Enterprise",,5/1/2026

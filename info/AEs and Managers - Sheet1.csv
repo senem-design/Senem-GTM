@@ -1,0 +1,33 @@
+AEs,Start Date,On Plan Date,Segment,Payment Frequency,Plan period,Region,Local Currency,FX,Local Variable,USD Variable,Commission Rate (Fixed),USD Quota (Annual)
+Matthew Brown,1/20/25,2/1/2025,Enteprise,Monthly,Annual,NYC,USD,1.00,"140,000","$140,000",12.00%,"$1,166,667"
+Ben Grosse,1/27/25,2/1/2025,Agency,Monthly,Annual,NYC,USD,1.00,"120,000","$120,000",12.00%,"$1,000,000"
+Willie Goetz,4/21/25,5/1/2025,Mid Market,Monthly,Annual,NYC,USD,1.00,"120,000","$120,000",12.00%,"$1,000,000"
+Connor Joyce,5/27/25,6/1/2025,Enteprise,Monthly,Annual,NYC,USD,1.00,"140,000","$140,000",12.00%,"$1,166,667"
+Hugo Howard,6/16/25,7/1/2025,Enteprise,Monthly,Annual,NYC,USD,1.00,"150,000","$150,000",12.00%,"$1,250,000"
+Joanie Sanders,6/30/25,7/1/2025,Agency,Monthly,Annual,NYC,USD,1.00,"120,000","$120,000",12.00%,"$1,000,000"
+Brendan Jackson,7/28/25,8/1/2025,Mid Market,Monthly,Annual,NYC,USD,1.00,"120,000","$120,000",12.00%,"$1,000,000"
+Lilly Steeves,7/28/25,8/1/2025,Enteprise,Monthly,Annual,NYC,USD,1.00,"140,000","$140,000",12.00%,"$1,166,667"
+Matt Haley,8/4/25,8/1/2025,Enteprise,Monthly,Annual,NYC,USD,1.00,"140,000","$140,000",12.00%,"$1,166,667"
+Nate Sagett,9/2/25,9/1/2025,Enteprise,Monthly,Annual,NYC,USD,1.00,"140,000","$140,000",12.00%,"$1,166,667"
+Matt Taylor,9/10/25,9/1/2025,Enteprise,Monthly,Annual,NYC,USD,1.00,"140,000","$140,000",12.00%,"$1,166,667"
+Ron Neugold,9/15/25,10/1/2025,Enteprise,Monthly,Annual,NYC,USD,1.00,"160,000","$160,000",12.00%,"$1,333,333"
+Jessica Cunningham,9/22/25,10/1/2025,Enteprise,Monthly,Annual,NYC,USD,1.00,"175,000","$175,000",10.00%,"$1,750,000"
+Jessica Kommor,9/29/25,10/1/2025,Mid Market,Monthly,Annual,NYC,USD,1.00,"120,000","$120,000",12.00%,"$1,000,000"
+Ravi Patel,11/10/25,11/1/2025,Enteprise,Monthly,Annual,LDN,GBP,1.34,"140,000","$187,600",12.00%,"$1,563,333"
+Ben Morriss,11/13/25,11/1/2025,Enteprise,Monthly,Annual,LDN,GBP,1.34,"110,000","$147,400",12.00%,"$1,228,333"
+James Boseley,2/2/26,2/1/2026,Mid Market,Monthly,Annual,LDN,GBP,1.34,"80,000","$107,200",12.00%,"$893,333"
+Ryan Jones,11/12/25,12/1/2025,Enteprise,Monthly,Annual,NYC,USD,1.00,"140,000","$140,000",12.00%,"$1,166,667"
+Nikki Lebedin,12/16/25,1/1/2026,Mid Market,Monthly,Annual,NYC,USD,1.00,"120,000","$120,000",12.00%,"$1,000,000"
+Richard Murphy,1/12/26,1/1/2026,Mid Market,Monthly,Annual,LDN,GBP,1.34,"110,000","$147,400",12.00%,"$1,228,333"
+Sophie Piacentini,2/1/26,2/1/2026,Mid Market,Monthly,Annual,NYC,USD,1.00,"100,000","$100,000",12.00%,"$833,333"
+Melissa Putterman,2/11/26,2/1/2026,Mid Market,Monthly,Annual,NYC,USD,1.00,"140,000","$140,000",12.00%,"$1,166,667"
+Mike Tang,2/18/26,3/1/2026,Enteprise,Monthly,Annual,NYC,USD,1.00,"140,000","$140,000",12.00%,"$1,166,667"
+Claudia Graves,3/3/26,3/1/2026,Mid Market,Monthly,Annual,LDN,GBP,1.34,"80,000","$107,200",12.00%,"$893,333"
+Jack Fairfield,3/30/2026,4/1/2026,Mid Market,Monthly,Annual,NYC,USD,1.00,"110,000","$110,000",12.00%,"$916,667"
+Joseph Ferguson,4/7/2026,4/1/2026,Mid Market,Monthly,Annual,LDN,GBP,1.34,"90,000","$120,600",12.00%,"$1,005,000"
+Carolyn Williamson,4/7/2026,4/1/2026,Mid Market,Monthly,Annual,LDN,GBP,1.34,"90,000","$120,600",12.00%,"$1,005,000"
+Managers,,,,,,,,,,,,
+Scott Schachter,03/02/2026,3/1/2026,Mid Market,,,NYC,USD,,,,,
+Charlie Demuth,01/27/2025,2/1/2025,Enterprise,,,NYC,USD,,,,,
+Tessa McManus,3/16/2026,4/1/2026,Mid Market,,,LDN,GBP,,,,,
+Kareem Agha,04/06/2026,4/1/2026,Enterprise,,,NYC,USD,,,,,

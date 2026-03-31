@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sales Leader Compensation Dashboard</title>
+  <style>
+    :root {
+      --bg: #0f1117;
+      --surface: #1a1d27;
+      --surface2: #222536;
+      --border: #2e3148;
+      --accent: #6c63ff;
+      --accent2: #00d4aa;
+      --accent3: #ff6b6b;
+      --accent4: #ffa94d;
+      --text: #e8eaf6;
+      --text-muted: #8b8fa8;
+      --text-dim: #5a5e78;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; min-height: 100vh; }
+
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.3px; }
+    header h1 span { color: var(--accent); }
+    header .meta { font-size: 12px; color: var(--text-muted); }
+
+    .main { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
+
+    /* ─── Section title ─── */
+    .section-title {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      color: var(--text-muted);
+      margin-bottom: 14px;
+      margin-top: 32px;
+    }
+    .section-title:first-child { margin-top: 0; }
+
+    /* ─── Summary cards ─── */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
+      margin-bottom: 8px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 18px 20px;
+    }
+    .card .label { font-size: 11px; color: var(--text-muted); margin-bottom: 8px; font-weight: 500; }
+    .card .value { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
+    .card .sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+    .card.accent .value { color: var(--accent); }
+    .card.green .value { color: var(--accent2); }
+    .card.orange .value { color: var(--accent4); }
+    .card.red .value { color: var(--accent3); }
+
+    /* ─── Leader table ─── */
+    .table-wrap {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    table { width: 100%; border-collapse: collapse; }
+    thead tr { background: var(--surface2); }
+    th {
+      padding: 12px 16px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--text-muted);
+      text-align: left;
+      white-space: nowrap;
+    }
+    th.right, td.right { text-align: right; }
+    td {
+      padding: 13px 16px;
+      font-size: 13px;
+      border-top: 1px solid var(--border);
+      vertical-align: middle;
+    }
+    tr:hover td { background: rgba(108,99,255,0.04); }
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-active { background: rgba(0,212,170,0.15); color: var(--accent2); }
+    .badge-signed { background: rgba(255,169,77,0.15); color: var(--accent4); }
+    .badge-term { background: rgba(255,107,107,0.15); color: var(--accent3); }
+    .badge-gbp { background: rgba(108,99,255,0.15); color: var(--accent); }
+    .name-cell { font-weight: 600; }
+    .title-cell { color: var(--text-muted); font-size: 12px; }
+    .comp-bar {
+      height: 5px;
+      border-radius: 3px;
+      background: var(--border);
+      margin-top: 5px;
+    }
+    .comp-bar-fill {
+      height: 100%;
+      border-radius: 3px;
+    }
+    .money { font-variant-numeric: tabular-nums; font-feature-settings: "tnum"; }
+
+    /* ─── Manager team section ─── */
+    .teams-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 16px;
+    }
+    .team-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .team-header {
+      padding: 14px 18px;
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+    .team-header-left .mgr-name { font-weight: 700; font-size: 14px; }
+    .team-header-left .mgr-title { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .team-quota { text-align: right; }
+    .team-quota .tq-label { font-size: 10px; color: var(--text-muted); }
+    .team-quota .tq-val { font-size: 15px; font-weight: 700; color: var(--accent2); }
+    .team-reps { padding: 8px 0; }
+    .team-rep {
+      padding: 8px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+    }
+    .team-rep:hover { background: rgba(255,255,255,0.03); }
+    .rep-info .rep-name { font-weight: 500; }
+    .rep-info .rep-role { font-size: 11px; color: var(--text-dim); }
+    .rep-quota { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+    .rep-quota.has-quota { color: var(--accent2); }
+    .team-footer {
+      padding: 10px 18px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* ─── Tab bar ─── */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0;
+    }
+    .tab {
+      padding: 10px 18px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      color: var(--text-muted);
+      transition: all 0.15s;
+      margin-bottom: -1px;
+    }
+    .tab:hover { color: var(--text); }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    /* ─── Progress bar ─── */
+    .bar-track {
+      width: 100%;
+      height: 6px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 0.4s ease;
+    }
+
+    .ote-row { display: flex; align-items: center; gap: 10px; }
+    .ote-label { font-size: 12px; min-width: 120px; }
+    .ote-bar-wrap { flex: 1; }
+    .ote-value { font-size: 12px; font-weight: 600; min-width: 80px; text-align: right; }
+
+    .footnote {
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>Sales Leader <span>Compensation</span> Dashboard</h1>
+    <div class="meta">Profound GTM · Last data sync: March 23, 2026</div>
+  </div>
+  <div class="meta" style="text-align:right;">FY 2026 Plan Period<br>Feb 1, 2026 – Jan 31, 2027</div>
+</header>
+
+<div class="main">
+
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('overview')">Overview</div>
+    <div class="tab" onclick="switchTab('leaders')">Leaders & Comp</div>
+    <div class="tab" onclick="switchTab('teams')">Teams & Quota</div>
+    <div class="tab" onclick="switchTab('reps')">Rep Roster</div>
+  </div>
+
+  <!-- ═══════════════════════ OVERVIEW ═══════════════════════ -->
+  <div id="tab-overview" class="tab-pane active">
+
+    <div class="section-title">Key Metrics</div>
+    <div class="cards">
+      <div class="card accent">
+        <div class="label">Total OTE — Leaders</div>
+        <div class="value">$3.1M</div>
+        <div class="sub">10 active sales leaders</div>
+      </div>
+      <div class="card green">
+        <div class="label">Total FY26 Quota — AEs</div>
+        <div class="value">$27.2M</div>
+        <div class="sub">Quota-bearing reps only</div>
+      </div>
+      <div class="card orange">
+        <div class="label">Active Quota-Bearing Reps</div>
+        <div class="value">22</div>
+        <div class="sub">Out of 30 AE/AM roster</div>
+      </div>
+      <div class="card red">
+        <div class="label">Pending / Signed Reps</div>
+        <div class="value">10</div>
+        <div class="sub">Not yet quota-active</div>
+      </div>
+      <div class="card">
+        <div class="label">Avg AE OTE (USD)</div>
+        <div class="value">$280K</div>
+        <div class="sub">Enterprise & Mid-Market</div>
+      </div>
+      <div class="card">
+        <div class="label">Currency Exposure</div>
+        <div class="value">USD + GBP</div>
+        <div class="sub">FX rate: 1.34</div>
+      </div>
+    </div>
+
+    <div class="section-title" style="margin-top:28px;">Leader OTE Comparison</div>
+    <div class="table-wrap" style="padding: 20px 24px;">
+      <div id="ote-bars"></div>
+    </div>
+
+    <p class="footnote">
+      * GBP figures converted at 1.34. Leader OTEs include base + target variable.
+      Tessa McManus terminated 3/23/2026 — team being redistributed to Scott Schachter / Mark Ebert.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════ LEADERS ═══════════════════════ -->
+  <div id="tab-leaders" class="tab-pane">
+    <div class="section-title">Sales Leaders &amp; Compensation</div>
+    <div class="table-wrap">
+      <table id="leaders-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Title</th>
+            <th>Manager</th>
+            <th>Status</th>
+            <th class="right">Base</th>
+            <th class="right">Variable</th>
+            <th class="right">OTE</th>
+            <th class="right">Ccy</th>
+            <th>Start Date</th>
+          </tr>
+        </thead>
+        <tbody id="leaders-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════ TEAMS ═══════════════════════ -->
+  <div id="tab-teams" class="tab-pane">
+    <div class="section-title">Team Quota Rollup by Manager</div>
+    <div class="teams-grid" id="teams-grid"></div>
+    <p class="footnote">
+      * $0 quota indicates rep is in ramp period, newly signed, or quota not yet assigned.
+      GBP quotas converted at 1.34 for USD equivalence.
+    </p>
+  </div>
+
+  <!-- ═══════════════════════ REPS ═══════════════════════ -->
+  <div id="tab-reps" class="tab-pane">
+    <div class="section-title">Full Rep Roster — Quota-Bearing Roles</div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Manager</th>
+            <th>Status</th>
+            <th class="right">Base</th>
+            <th class="right">Variable (OTE)</th>
+            <th class="right">FY26 Annual Quota</th>
+            <th>Start Date</th>
+          </tr>
+        </thead>
+        <tbody id="reps-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+//  DATA
+// ─────────────────────────────────────────────
+
+const leaders = [
+  { name: 'Mark Ebert',          title: 'SVP, Revenue',                      manager: 'James Cadwallader', status: 'Active', base: 300000, variable: 300000, ote: 600000, ccy: 'USD', start: '8/11/2025' },
+  { name: 'Charles Demuth',      title: 'Manager, Enterprise Sales',         manager: 'Mark Ebert',        status: 'Active', base: 200000, variable: 175000, ote: 375000, ccy: 'USD', start: '1/27/2025' },
+  { name: 'Scott Schachter',     title: 'Mid-Market Sales Manager',          manager: 'Mark Ebert',        status: 'Active', base: 215000, variable: 215000, ote: 430000, ccy: 'USD', start: '3/2/2026'  },
+  { name: 'Ravi Patel',          title: 'Director, Enterprise Sales (UK)',   manager: 'Mark Ebert',        status: 'Active', base: 187600, variable: 187600, ote: 375200, ccy: 'GBP→USD', start: '11/10/2025' },
+  { name: 'Carlos Hernandez',    title: 'Head of Customer Success',          manager: 'James Cadwallader', status: 'Active', base: 210000, variable: 140000, ote: 350000, ccy: 'USD', start: '10/21/2025' },
+  { name: 'James Underhill',     title: 'Head of Product-Led GTM & Ops',    manager: 'James Cadwallader', status: 'Active', base: 275000, variable: 0,      ote: 275000, ccy: 'USD', start: '9/22/2025'  },
+  { name: 'Hana Hajebian',       title: 'Manager, Solutions Consulting',    manager: 'Mark Ebert',        status: 'Active', base: 225000, variable: 0,      ote: 225000, ccy: 'USD', start: '9/2/2025'   },
+  { name: 'Brooke Winfield',     title: 'Manager, Account Management',      manager: 'Carlos Hernandez',  status: 'Active', base: 176000, variable: 80000,  ote: 256000, ccy: 'USD', start: '9/15/2025'  },
+  { name: 'Christie Ray Harrison',title:'Manager, Agency Engagement',       manager: 'Carlos Hernandez',  status: 'Active', base: 187000, variable: 50000,  ote: 237000, ccy: 'USD', start: '9/29/2025'  },
+  { name: 'Joanie Sanders',      title: 'Agency Partnerships Lead',         manager: 'Mark Ebert',        status: 'Active', base: 230000, variable: 120000, ote: 350000, ccy: 'USD', start: '6/30/2025'  },
+  { name: 'Tessa McManus',       title: 'Sr Manager, Mid-Market Sales',     manager: 'Mark Ebert',        status: 'Terminated', base: 199494, variable: 199494, ote: 398988, ccy: 'GBP→USD', start: '3/16/2026' },
+];
+
+// Rep data: name, role, manager, status, base, variable (OTE comp), fy26quota (USD), start, ccy
+const reps = [
+  { name: 'Matthew Brown',      role: 'Enterprise AE',    manager: 'Mark Ebert',        status: 'Active',  base: 140000, variable: 140000, fy26quota: 1166667, start: '1/20/2025', ccy: 'USD' },
+  { name: 'Benjamin Grosse',    role: 'Agency AE',        manager: 'Mark Ebert',        status: 'Active',  base: 120000, variable: 120000, fy26quota: 0,       start: '1/27/2025', ccy: 'USD' },
+  { name: 'Willie Goetz',       role: 'Mid-Market AE',    manager: 'Scott Schachter',   status: 'Active',  base: 120000, variable: 120000, fy26quota: 1000000, start: '4/21/2025', ccy: 'USD' },
+  { name: 'Connor Joyce',       role: 'Enterprise AE',    manager: 'Charles Demuth',    status: 'Active',  base: 140000, variable: 140000, fy26quota: 1152778, start: '5/27/2025', ccy: 'USD' },
+  { name: 'Hugo Howard',        role: 'Enterprise AE',    manager: 'Charles Demuth',    status: 'Active',  base: 150000, variable: 150000, fy26quota: 1250000, start: '6/16/2025', ccy: 'USD' },
+  { name: 'Joanie Sanders',     role: 'Agency Partnerships Lead', manager: 'Mark Ebert',status: 'Active',  base: 230000, variable: 120000, fy26quota: 1000000, start: '6/30/2025', ccy: 'USD' },
+  { name: 'Brendan Jackson',    role: 'Mid-Market AE',    manager: 'Scott Schachter',   status: 'Active',  base: 120000, variable: 120000, fy26quota: 1000000, start: '7/28/2025', ccy: 'USD' },
+  { name: 'Lilly Juliano',      role: 'Enterprise AE',    manager: 'Charles Demuth',    status: 'Active',  base: 140000, variable: 140000, fy26quota: 0,       start: '7/28/2025', ccy: 'USD' },
+  { name: 'Matt Haley',         role: 'Enterprise AE',    manager: 'Mark Ebert',        status: 'Active',  base: 140000, variable: 140000, fy26quota: 1152777, start: '8/4/2025',  ccy: 'USD' },
+  { name: 'Nate Sagett',        role: 'Enterprise AE',    manager: 'Mark Ebert',        status: 'Active',  base: 140000, variable: 140000, fy26quota: 1163194, start: '9/2/2025',  ccy: 'USD' },
+  { name: 'Matthew Taylor',     role: 'Enterprise AE',    manager: 'Mark Ebert',        status: 'Active',  base: 140000, variable: 140000, fy26quota: 0,       start: '9/10/2025', ccy: 'USD' },
+  { name: 'Ron Neugold',        role: 'Enterprise AE',    manager: 'Charles Demuth',    status: 'Active',  base: 160000, variable: 160000, fy26quota: 1333333, start: '9/15/2025', ccy: 'USD' },
+  { name: 'Jessica Cunningham', role: 'Enterprise AE',    manager: 'Charles Demuth',    status: 'Active',  base: 175000, variable: 175000, fy26quota: 1750000, start: '9/22/2025', ccy: 'USD' },
+  { name: 'Jess Kommor',        role: 'Mid-Market AE',    manager: 'Scott Schachter',   status: 'Active',  base: 120000, variable: 120000, fy26quota: 0,       start: '9/29/2025', ccy: 'USD' },
+  { name: 'Ravi Patel',         role: 'Dir, Enterprise Sales', manager: 'Mark Ebert',   status: 'Active',  base: 187600, variable: 187600, fy26quota: 1561817, start: '11/10/2025',ccy: 'GBP' },
+  { name: 'Ben Morriss',        role: 'Enterprise AE (UK)', manager: 'Mark Ebert',      status: 'Active',  base: 147400, variable: 147400, fy26quota: 1227142, start: '11/13/2025',ccy: 'GBP' },
+  { name: 'Ryan Jones',         role: 'Enterprise AE',    manager: 'Charles Demuth',    status: 'Active',  base: 140000, variable: 140000, fy26quota: 1166667, start: '11/12/2025',ccy: 'USD' },
+  { name: 'Sean Konchan',       role: 'Account Manager',  manager: 'Brooke Winfield',   status: 'Active',  base: 160000, variable: 90000,  fy26quota: 0,       start: '12/9/2025', ccy: 'USD' },
+  { name: 'Nikki Lebedin',      role: 'Mid-Market AE',    manager: 'Scott Schachter',   status: 'Active',  base: 120000, variable: 120000, fy26quota: 946667,  start: '12/16/2025',ccy: 'USD' },
+  { name: 'Rich Murphy',        role: 'Enterprise AE (UK)', manager: 'Mark Ebert',      status: 'Active',  base: 147400, variable: 147400, fy26quota: 0,       start: '1/12/2026', ccy: 'GBP' },
+  { name: 'Chris Carey',        role: 'Account Manager',  manager: 'Brooke Winfield',   status: 'Active',  base: 138000, variable: 92000,  fy26quota: 0,       start: '1/19/2026', ccy: 'USD' },
+  { name: 'Sophie Piacentini',  role: 'Mid-Market AE',    manager: 'Scott Schachter',   status: 'Active',  base: 100000, variable: 100000, fy26quota: 719444,  start: '9/8/2025',  ccy: 'USD' },
+  { name: 'Melissa Putterman',  role: 'Mid-Market AE',    manager: 'Scott Schachter',   status: 'Active',  base: 140000, variable: 140000, fy26quota: 1007222, start: '2/11/2026', ccy: 'USD' },
+  { name: 'Mike Tang',          role: 'Enterprise AE',    manager: 'Charles Demuth',    status: 'Active',  base: 140000, variable: 140000, fy26quota: 910000,  start: '2/18/2026', ccy: 'USD' },
+  { name: 'James Boseley',      role: 'Mid-Market AE (UK)', manager: 'Scott Schachter', status: 'Active',  base: 107200, variable: 107200, fy26quota: 770496,  start: '2/2/2026',  ccy: 'GBP' },
+  { name: 'Claudia Graves',     role: 'Mid-Market AE (UK)', manager: 'Scott Schachter', status: 'Active',  base: 107200, variable: 107200, fy26quota: 696124,  start: '3/3/2026',  ccy: 'GBP' },
+  { name: 'Mike Joyce',         role: 'Enterprise AE',    manager: 'Charles Demuth',    status: 'Signed',  base: 140000, variable: 140000, fy26quota: 0,       start: '4/1/2026',  ccy: 'USD' },
+  { name: 'Alec Dolton',        role: 'Enterprise AE',    manager: 'Charles Demuth',    status: 'Signed',  base: 140000, variable: 140000, fy26quota: 0,       start: '4/1/2026',  ccy: 'USD' },
+  { name: 'Jack Fairfield',     role: 'Mid-Market AE',    manager: 'Scott Schachter',   status: 'Signed',  base: 110000, variable: 110000, fy26quota: 0,       start: '3/30/2026', ccy: 'USD' },
+  { name: 'Joseph Ferguson',    role: 'Mid-Market AE',    manager: 'Scott Schachter',   status: 'Signed',  base: 120000, variable: 120000, fy26quota: 0,       start: '4/7/2026',  ccy: 'USD' },
+  { name: 'Carolyn Williamson', role: 'Mid-Market AE',    manager: 'Scott Schachter',   status: 'Signed',  base: 120000, variable: 120000, fy26quota: 0,       start: '4/7/2026',  ccy: 'USD' },
+  { name: 'Sean Clademenos',    role: 'Account Manager',  manager: 'Brooke Winfield',   status: 'Active',  base: 126000, variable: 84000,  fy26quota: 0,       start: '2/16/2026', ccy: 'USD' },
+];
+
+// Teams with manager metadata + quota rollup
+const teams = [
+  {
+    manager: 'Charles Demuth',
+    title: 'Manager, Enterprise Sales',
+    ote: 375000,
+    color: '#6c63ff',
+    reps: reps.filter(r => r.manager === 'Charles Demuth'),
+  },
+  {
+    manager: 'Scott Schachter',
+    title: 'Mid-Market Sales Manager',
+    ote: 430000,
+    color: '#00d4aa',
+    reps: reps.filter(r => r.manager === 'Scott Schachter'),
+  },
+  {
+    manager: 'Mark Ebert',
+    title: 'SVP, Revenue (Direct AEs)',
+    ote: 600000,
+    color: '#ffa94d',
+    reps: reps.filter(r => r.manager === 'Mark Ebert'),
+  },
+  {
+    manager: 'Brooke Winfield',
+    title: 'Manager, Account Management',
+    ote: 256000,
+    color: '#ff6b6b',
+    reps: reps.filter(r => r.manager === 'Brooke Winfield'),
+  },
+];
+
+// ─────────────────────────────────────────────
+//  FORMATTERS
+// ─────────────────────────────────────────────
+const fmt = (n, ccy = '') => {
+  if (!n) return '—';
+  const s = '$' + n.toLocaleString();
+  return ccy === 'GBP' ? '£' + n.toLocaleString() : s;
+};
+const fmtShort = n => {
+  if (!n) return '—';
+  if (n >= 1000000) return '$' + (n / 1000000).toFixed(1) + 'M';
+  if (n >= 1000) return '$' + Math.round(n / 1000) + 'K';
+  return '$' + n;
+};
+
+// ─────────────────────────────────────────────
+//  RENDER LEADERS TABLE
+// ─────────────────────────────────────────────
+function renderLeaders() {
+  const tbody = document.getElementById('leaders-tbody');
+  const maxOte = Math.max(...leaders.map(l => l.ote));
+  tbody.innerHTML = leaders.map(l => {
+    const badgeClass = l.status === 'Active' ? 'badge-active' : 'badge-term';
+    const barPct = Math.round((l.ote / maxOte) * 100);
+    const barColor = l.ccy.includes('GBP') ? '#6c63ff' : '#00d4aa';
+    return `
+      <tr>
+        <td class="name-cell">${l.name}</td>
+        <td class="title-cell">${l.title}</td>
+        <td class="title-cell">${l.manager}</td>
+        <td><span class="badge ${badgeClass}">${l.status}</span></td>
+        <td class="right money">${fmtShort(l.base)}</td>
+        <td class="right money">${l.variable ? fmtShort(l.variable) : '—'}</td>
+        <td class="right money" style="font-weight:700;">
+          ${fmtShort(l.ote)}
+          <div class="comp-bar"><div class="comp-bar-fill" style="width:${barPct}%;background:${barColor};"></div></div>
+        </td>
+        <td><span class="badge ${l.ccy.includes('GBP') ? 'badge-gbp' : ''}">${l.ccy}</span></td>
+        <td class="title-cell">${l.start}</td>
+      </tr>`;
+  }).join('');
+}
+
+// ─────────────────────────────────────────────
+//  RENDER OTE BARS (Overview)
+// ─────────────────────────────────────────────
+function renderOteBars() {
+  const active = leaders.filter(l => l.status === 'Active').sort((a, b) => b.ote - a.ote);
+  const max = active[0].ote;
+  const colors = ['#6c63ff','#00d4aa','#ffa94d','#ff6b6b','#7ec8e3','#a0e6d4','#ffcf77','#ff9a9a','#b39ddb','#80cbc4'];
+  document.getElementById('ote-bars').innerHTML = active.map((l, i) => `
+    <div class="ote-row" style="margin-bottom:14px;">
+      <div class="ote-label">${l.name}</div>
+      <div class="ote-bar-wrap">
+        <div class="bar-track"><div class="bar-fill" style="width:${Math.round(l.ote/max*100)}%;background:${colors[i]};"></div></div>
+        <div style="font-size:10px;color:var(--text-dim);margin-top:3px;">${l.title}</div>
+      </div>
+      <div class="ote-value" style="color:${colors[i]};">${fmtShort(l.ote)}</div>
+    </div>
+  `).join('');
+}
+
+// ─────────────────────────────────────────────
+//  RENDER TEAMS
+// ─────────────────────────────────────────────
+function renderTeams() {
+  const grid = document.getElementById('teams-grid');
+  grid.innerHTML = teams.map(t => {
+    const totalQuota = t.reps.reduce((s, r) => s + r.fy26quota, 0);
+    const activeReps = t.reps.filter(r => r.status === 'Active');
+    const signedReps = t.reps.filter(r => r.status === 'Signed');
+    const repRows = t.reps.map(r => {
+      const hasQuota = r.fy26quota > 0;
+      const badge = r.status === 'Signed' ? `<span class="badge badge-signed" style="font-size:10px;">Signed</span>` : '';
+      return `
+        <div class="team-rep">
+          <div class="rep-info">
+            <div class="rep-name">${r.name} ${badge}</div>
+            <div class="rep-role">${r.role} · ${r.ccy !== 'USD' ? r.ccy : 'USD'}</div>
+          </div>
+          <div class="rep-quota ${hasQuota ? 'has-quota' : ''}">${hasQuota ? fmtShort(r.fy26quota) : 'Ramping'}</div>
+        </div>`;
+    }).join('');
+
+    return `
+      <div class="team-card">
+        <div class="team-header">
+          <div class="team-header-left">
+            <div class="mgr-name" style="color:${t.color};">${t.manager}</div>
+            <div class="mgr-title">${t.title}</div>
+          </div>
+          <div class="team-quota">
+            <div class="tq-label">Team FY26 Quota</div>
+            <div class="tq-val" style="color:${t.color};">${totalQuota ? '$' + (totalQuota/1000000).toFixed(1) + 'M' : '—'}</div>
+          </div>
+        </div>
+        <div class="team-reps">${repRows}</div>
+        <div class="team-footer">
+          <span>${activeReps.length} active · ${signedReps.length} signed</span>
+          <span>Mgr OTE: ${fmtShort(t.ote)}</span>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ─────────────────────────────────────────────
+//  RENDER REPS TABLE
+// ─────────────────────────────────────────────
+function renderReps() {
+  const tbody = document.getElementById('reps-tbody');
+  const sorted = [...reps].sort((a, b) => b.fy26quota - a.fy26quota);
+  tbody.innerHTML = sorted.map(r => {
+    const badgeClass = r.status === 'Active' ? 'badge-active' : r.status === 'Signed' ? 'badge-signed' : 'badge-term';
+    const quotaColor = r.fy26quota > 1200000 ? '#00d4aa' : r.fy26quota > 0 ? '#7ec8e3' : '';
+    return `
+      <tr>
+        <td class="name-cell">${r.name}</td>
+        <td class="title-cell">${r.role}</td>
+        <td class="title-cell">${r.manager}</td>
+        <td><span class="badge ${badgeClass}">${r.status}</span></td>
+        <td class="right money">${fmtShort(r.base)}</td>
+        <td class="right money">${fmtShort(r.base + r.variable)}</td>
+        <td class="right money" style="font-weight:600;color:${quotaColor};">${r.fy26quota ? '$' + r.fy26quota.toLocaleString() : '—'}</td>
+        <td class="title-cell">${r.start}</td>
+      </tr>`;
+  }).join('');
+}
+
+// ─────────────────────────────────────────────
+//  TAB SWITCHING
+// ─────────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+// ─────────────────────────────────────────────
+//  INIT
+// ─────────────────────────────────────────────
+renderLeaders();
+renderOteBars();
+renderTeams();
+renderReps();
+</script>
+</body>
+</html>

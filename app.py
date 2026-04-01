@@ -26,49 +26,91 @@ st.set_page_config(
 st.markdown(
     """
     <style>
+    /* ── Base ───────────────────────────────────────────────────────────── */
+    body, [data-testid="stAppViewContainer"] { background: #f8fafc; }
+
     /* ── Header bar ────────────────────────────────────────────────────── */
-    [data-testid="stAppViewContainer"] > .main > div:first-child {
-        background: linear-gradient(135deg, #0d2b55 0%, #1a4a8a 100%);
-    }
     .gtm-header {
-        background: linear-gradient(135deg, #0d2b55 0%, #1a4a8a 100%);
+        background: #1e293b;
         color: white;
-        padding: 1.2rem 2rem;
-        border-radius: 8px;
-        margin-bottom: 1.5rem;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        padding: 1.4rem 2rem;
+        border-radius: 10px;
+        margin-bottom: 1.75rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+        border-left: 4px solid #3b82f6;
     }
-    .gtm-header h1 { color: white; margin: 0; font-size: 1.8rem; }
-    .gtm-header p  { color: #a8c4e0; margin: 0.25rem 0 0; font-size: 0.9rem; }
+    .gtm-header h1 { color: white; margin: 0; font-size: 1.65rem; font-weight: 700; letter-spacing: -0.3px; }
+    .gtm-header p  { color: #94a3b8; margin: 0.3rem 0 0; font-size: 0.88rem; }
+
+    /* ── Section dividers ───────────────────────────────────────────────── */
+    .section-title {
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #64748b;
+        margin: 1.5rem 0 0.6rem;
+        padding-bottom: 0.35rem;
+        border-bottom: 2px solid #e2e8f0;
+    }
+
+    /* ── Status badges ──────────────────────────────────────────────────── */
+    .badge-active   { display:inline-block; background:#dcfce7; color:#166534; padding:2px 10px; border-radius:20px; font-size:0.75rem; font-weight:700; border:1px solid #bbf7d0; }
+    .badge-inactive { display:inline-block; background:#fee2e2; color:#991b1b; padding:2px 10px; border-radius:20px; font-size:0.75rem; font-weight:700; border:1px solid #fecaca; }
 
     /* ── Segment colour pills ───────────────────────────────────────────── */
-    .seg-enterprise  { background:#1565c0; color:white; padding:2px 8px; border-radius:12px; font-size:0.78rem; font-weight:600; }
-    .seg-mid-market  { background:#2e7d32; color:white; padding:2px 8px; border-radius:12px; font-size:0.78rem; font-weight:600; }
-    .seg-agency      { background:#e65100; color:white; padding:2px 8px; border-radius:12px; font-size:0.78rem; font-weight:600; }
+    .seg-enterprise { background:#dbeafe; color:#1e40af; padding:2px 9px; border-radius:20px; font-size:0.75rem; font-weight:600; }
+    .seg-mid-market { background:#dcfce7; color:#14532d; padding:2px 9px; border-radius:20px; font-size:0.75rem; font-weight:600; }
+    .seg-agency     { background:#ffedd5; color:#9a3412; padding:2px 9px; border-radius:20px; font-size:0.75rem; font-weight:600; }
 
-    /* ── Metric card tweaks ─────────────────────────────────────────────── */
+    /* ── Metric cards ───────────────────────────────────────────────────── */
     [data-testid="metric-container"] {
-        background: #f8faff;
-        border: 1px solid #d0e0f8;
-        border-radius: 8px;
-        padding: 0.6rem 0.8rem;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 0.75rem 1rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06);
     }
-    [data-testid="metric-container"] label { color: #444; font-size: 0.78rem; }
+    [data-testid="metric-container"] label { color: #64748b; font-size: 0.76rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    [data-testid="stMetricValue"] { color: #1e293b; font-size: 1.3rem; font-weight: 700; }
+
+    /* ── Quota section card ─────────────────────────────────────────────── */
+    .quota-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 0.9rem 1.1rem;
+        margin-bottom: 0.75rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .quota-card-title {
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: #3b82f6;
+        margin-bottom: 0.5rem;
+    }
+    .quota-card-adjusted .quota-card-title { color: #10b981; }
 
     /* ── Plan card ──────────────────────────────────────────────────────── */
     .plan-card {
-        border: 1px solid #d0e0f8;
-        border-radius: 8px;
-        padding: 1rem 1.2rem;
-        background: #f8faff;
-        margin-bottom: 0.8rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 1rem 1.25rem;
+        background: #ffffff;
+        margin-bottom: 0.85rem;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.06);
     }
 
+    /* ── Dataframe polish ───────────────────────────────────────────────── */
+    [data-testid="stDataFrame"] { border-radius: 8px; overflow: hidden; }
+
     /* ── Sidebar ────────────────────────────────────────────────────────── */
-    [data-testid="stSidebar"] { background: #0d2b55; }
-    [data-testid="stSidebar"] * { color: #d0e8ff !important; }
+    [data-testid="stSidebar"] { background: #1e293b; }
+    [data-testid="stSidebar"] * { color: #cbd5e1 !important; }
     [data-testid="stSidebar"] .stSelectbox label,
-    [data-testid="stSidebar"] .stMultiSelect label { color: #a8c4e0 !important; }
+    [data-testid="stSidebar"] .stMultiSelect label { color: #94a3b8 !important; }
     </style>
     """,
     unsafe_allow_html=True,
@@ -105,9 +147,8 @@ DEFAULT_QUOTA_STANDARD      = 1_000_000  # $120k variable / 12% commission rate
 # Helpers
 # ---------------------------------------------------------------------------
 
-def fmt_currency(amount: float, currency: str = "USD") -> str:
-    if currency == "GBP":
-        return f"£{amount:,.0f}"
+def fmt_currency(amount: float) -> str:
+    """Format amount as USD ($X,XXX). All outputs are in USD."""
     return f"${amount:,.0f}"
 
 
@@ -250,6 +291,22 @@ def calculate_months_on_plan(start: date, end: date) -> int:
     return max(1, min(months, 12))
 
 
+def plan_status(plan: dict) -> str:
+    """Return 'Active' if today falls within the plan period, else 'Inactive'."""
+    today = date.today()
+    ps = plan.get("plan_start")
+    pe = plan.get("plan_end")
+    if ps is None or pe is None:
+        return "Inactive"
+    return "Active" if ps <= today <= pe else "Inactive"
+
+
+def status_badge_html(status: str) -> str:
+    if status == "Active":
+        return '<span class="badge-active">&#9679; ACTIVE</span>'
+    return '<span class="badge-inactive">&#9679; INACTIVE</span>'
+
+
 # ---------------------------------------------------------------------------
 # Plan metrics
 # ---------------------------------------------------------------------------
@@ -295,21 +352,37 @@ def calculate_plan_metrics(plan: dict) -> dict:
     q3 = sum(total_by_month[6:9])
     q4 = sum(total_by_month[9:12])
 
+    q1_adjusted = q1 * plan["quota_factor"]
+    q2_adjusted = q2 * plan["quota_factor"]
+    q3_adjusted = q3 * plan["quota_factor"]
+    q4_adjusted = q4 * plan["quota_factor"]
+
+    # pilot_rate ≈ base_rate * (5/12) ≈ base_rate / 2.4
+    # Based on source data: for Charlie Demuth base_rate=1.20%, pilot=0.50% (ratio ≈ 0.4167)
+    pilot_rate          = base_rate / 2.4
+    contract_break_rate = pilot_rate
+
     return {
-        "ae_monthly":       ae_monthly,
-        "total_by_month":   total_by_month,
-        "quota_rollup":     quota_rollup,
-        "total_quota":      total_quota,
-        "managed_quota":    managed_quota,
-        "months_on_plan":   months_on_plan,
-        "proration":        proration,
+        "ae_monthly":        ae_monthly,
+        "total_by_month":    total_by_month,
+        "quota_rollup":      quota_rollup,
+        "total_quota":       total_quota,
+        "managed_quota":     managed_quota,
+        "months_on_plan":    months_on_plan,
+        "proration":         proration,
         "prorated_variable": prorated_variable,
-        "base_rate":        base_rate,
-        "tier1_threshold":  tier1_threshold,
-        "tier1_rate":       tier1_rate,
-        "tier2_threshold":  tier2_threshold,
-        "tier2_rate":       tier2_rate,
+        "base_rate":         base_rate,
+        "tier1_threshold":   tier1_threshold,
+        "tier1_rate":        tier1_rate,
+        "tier2_threshold":   tier2_threshold,
+        "tier2_rate":        tier2_rate,
+        "pilot_rate":            pilot_rate,
+        "contract_break_rate":   contract_break_rate,
         "q1": q1, "q2": q2, "q3": q3, "q4": q4,
+        "q1_adjusted": q1_adjusted,
+        "q2_adjusted": q2_adjusted,
+        "q3_adjusted": q3_adjusted,
+        "q4_adjusted": q4_adjusted,
     }
 
 
@@ -380,8 +453,83 @@ def load_data() -> tuple[pd.DataFrame, pd.DataFrame]:
 def build_excel(plan: dict, metrics: dict) -> bytes:
     output = io.BytesIO()
     with pd.ExcelWriter(output, engine="openpyxl") as writer:
-        # ── Sheet 1: Detailed Plan ────────────────────────────────────────
-        rows = []
+
+        # ── Sheet 1: Compensation Plan Summary ───────────────────────────
+        summary_rows: list[tuple] = []
+
+        # Header
+        mgr_name = plan["manager_name"]
+        summary_rows.append((f"{mgr_name} — FY26 Compensation Plan", ""))
+        summary_rows.append((
+            f"1st Line Manager — {plan['segment']} | Currency: USD", ""
+        ))
+        summary_rows.append(("", ""))
+
+        # Plan Parameters
+        summary_rows.append(("PLAN PARAMETERS", ""))
+        summary_rows.append(("Plan Start Date",    str(plan["plan_start"])))
+        summary_rows.append(("Plan End Date",       str(plan["plan_end"])))
+        summary_rows.append(("Months on Plan",      metrics["months_on_plan"]))
+        summary_rows.append(("Proration",           f"{metrics['proration']:.0%}"))
+        summary_rows.append(("Base Salary",         fmt_currency(plan["base_salary"])))
+        summary_rows.append(("Annual Variable",     fmt_currency(plan["variable"])))
+        summary_rows.append(("Prorated Variable",   fmt_currency(metrics["prorated_variable"])))
+        summary_rows.append(("Quota Rollup",        fmt_currency(metrics["quota_rollup"])))
+        summary_rows.append(("Quota Factor",        f"{plan['quota_factor']}x"))
+        summary_rows.append((
+            "Quota Rollup (adjusted for Quota Factor)",
+            fmt_currency(metrics["total_quota"]),
+        ))
+        summary_rows.append(("Base Commission Rate", f"{metrics['base_rate']:.2%}"))
+        summary_rows.append(("", ""))
+
+        # Accelerators
+        br_pct = metrics["base_rate"] * 100
+        t1_pct = metrics["tier1_rate"] * 100
+        t2_pct = metrics["tier2_rate"] * 100
+        pilot_pct = metrics["pilot_rate"] * 100
+        cb_pct    = metrics["contract_break_rate"] * 100
+
+        summary_rows.append(("ACCELERATORS", ""))
+        summary_rows.append(("Tier", "Threshold to Quota", "Rate Multiplier", "Quota Threshold", "Actual Rate"))
+        summary_rows.append(("Standard",       "0%",    "1.00x", "$0",                          f"{br_pct:.2f}%"))
+        summary_rows.append(("Tier 1",         "100%",  "1.25x", fmt_currency(metrics["tier1_threshold"]), f"{t1_pct:.2f}%"))
+        summary_rows.append(("Tier 2",         "150%",  "1.50x", fmt_currency(metrics["tier2_threshold"]), f"{t2_pct:.2f}%"))
+        summary_rows.append(("Pilot Rate",     "",      "",       "",                            f"{pilot_pct:.2f}%"))
+        summary_rows.append(("Contract Break", "",      "",       "",                            f"{cb_pct:.2f}%"))
+        summary_rows.append(("", ""))
+
+        # Quarterly Quota (Adjusted)
+        summary_rows.append(("QUARTERLY QUOTA", "Adjusted for Quota Factor"))
+        summary_rows.append(("Quarter", "Quota"))
+        summary_rows.append(("Q1", fmt_currency(metrics["q1_adjusted"])))
+        summary_rows.append(("Q2", fmt_currency(metrics["q2_adjusted"])))
+        summary_rows.append(("Q3", fmt_currency(metrics["q3_adjusted"])))
+        summary_rows.append(("Q4", fmt_currency(metrics["q4_adjusted"])))
+        summary_rows.append(("Total", fmt_currency(metrics["total_quota"])))
+        summary_rows.append(("", ""))
+
+        # Team Roster
+        summary_rows.append(("TEAM ROSTER", ""))
+        summary_rows.append(("#", "Rep Name", "Status", "Start Date", "Plan Date"))
+        for idx, ae in enumerate(plan["aes"], start=1):
+            summary_rows.append((
+                idx,
+                ae["name"],
+                ae.get("status", "Started"),
+                str(ae.get("start_date", "")),
+                str(ae.get("on_plan_date", "")),
+            ))
+        summary_rows.append(("EOY FY26 Team Count", len(plan["aes"])))
+
+        # Pad rows to EXCEL_SUMMARY_COLS columns (matches the widest row: accelerator header)
+        EXCEL_SUMMARY_COLS = 5
+        padded = [r + ("",) * (EXCEL_SUMMARY_COLS - len(r)) if len(r) < EXCEL_SUMMARY_COLS else r for r in summary_rows]
+        summary_df = pd.DataFrame(padded, columns=["A", "B", "C", "D", "E"])
+        summary_df.to_excel(writer, sheet_name="Compensation Plan", index=False, header=False)
+
+        # ── Sheet 2: Monthly Rollup Detail ───────────────────────────────
+        detail_rows = []
         for ae in plan["aes"]:
             monthly = metrics["ae_monthly"].get(ae["name"], [0.0] * 12)
             row: dict[str, Any] = {
@@ -398,51 +546,10 @@ def build_excel(plan: dict, metrics: dict) -> bytes:
             for lbl, val in zip(MONTH_LABELS, monthly):
                 row[lbl] = val
             row["Total"] = sum(monthly)
-            rows.append(row)
+            detail_rows.append(row)
 
-        detail_df = pd.DataFrame(rows)
-        detail_df.to_excel(writer, sheet_name="Detailed Plan", index=False)
-
-        # ── Sheet 2: Summary ──────────────────────────────────────────────
-        summary_rows = [
-            ("Manager",            plan["manager_name"]),
-            ("Segment",            plan["segment"]),
-            ("Region",             plan["region"]),
-            ("Currency",           plan["currency"]),
-            ("Base Salary",        plan["base_salary"]),
-            ("Variable",           plan["variable"]),
-            ("Quota Factor",       plan["quota_factor"]),
-            ("Plan Start",         plan["plan_start"]),
-            ("Plan End",           plan["plan_end"]),
-            ("Months on Plan",     metrics["months_on_plan"]),
-            ("Proration",          f"{metrics['proration']:.2%}"),
-            ("",                   ""),
-            ("Quota Rollup",       metrics["quota_rollup"]),
-            ("Total Quota",        metrics["total_quota"]),
-            ("Managed Quota",      metrics["managed_quota"]),
-            ("Prorated Variable",  metrics["prorated_variable"]),
-            ("Base Commission Rate", f"{metrics['base_rate']:.2%}"),
-            ("",                   ""),
-            ("Tier 1 Threshold",   metrics["tier1_threshold"]),
-            ("Tier 1 Rate",        f"{metrics['tier1_rate']:.2%}"),
-            ("Tier 2 Threshold",   metrics["tier2_threshold"]),
-            ("Tier 2 Rate",        f"{metrics['tier2_rate']:.2%}"),
-            ("",                   ""),
-            ("Q1 (Feb-Apr)",       metrics["q1"]),
-            ("Q2 (May-Jul)",       metrics["q2"]),
-            ("Q3 (Aug-Oct)",       metrics["q3"]),
-            ("Q4 (Nov-Jan)",       metrics["q4"]),
-        ]
-        # Monthly headcount
-        for i, lbl in enumerate(MONTH_LABELS):
-            count = sum(
-                1 for ae in plan["aes"]
-                if calc_monthly_quota(ae["usd_quota"], ae["on_plan_date"], FISCAL_MONTHS[i]) > 0
-            )
-            summary_rows.append((f"Headcount {lbl}", count))
-
-        summary_df = pd.DataFrame(summary_rows, columns=["Metric", "Value"])
-        summary_df.to_excel(writer, sheet_name="Summary", index=False)
+        detail_df = pd.DataFrame(detail_rows)
+        detail_df.to_excel(writer, sheet_name="Monthly Rollup", index=False)
 
     return output.getvalue()
 
@@ -804,10 +911,10 @@ with tab_roster:
 # TAB 2 – PLAN BUILDER
 # ===========================================================================
 with tab_builder:
-    st.markdown("### 🏗️ Build a Manager Plan")
+    st.markdown("### Plan Builder")
 
     # ── Manager Details ────────────────────────────────────────────────────
-    with st.expander("📌 Manager Details", expanded=True):
+    with st.expander("Manager Details", expanded=True):
         col_md1, col_md2 = st.columns(2)
 
         with col_md1:
@@ -850,7 +957,6 @@ with tab_builder:
             )
             plan_currency = CURRENCIES[plan_region]
             plan_fx       = FX_RATES[plan_currency]
-            st.info(f"Currency: **{plan_currency}**  |  FX Rate: **{plan_fx}**")
 
             quota_factor = st.number_input(
                 "Quota Factor", min_value=1.0, max_value=3.0, value=1.25,
@@ -1049,7 +1155,7 @@ with tab_builder:
 
     # ── Live Preview ───────────────────────────────────────────────────────
     st.markdown("---")
-    st.markdown("### 📊 Live Preview")
+    st.markdown("### Live Preview")
 
     if not plan_aes:
         st.info("Add AEs or TBHs above to see the quota preview.")
@@ -1106,33 +1212,56 @@ with tab_builder:
         st.plotly_chart(fig_bar, use_container_width=True)
 
         # ── Summary metrics ────────────────────────────────────────────────
-        st.markdown("#### 📐 Plan Metrics")
+        _status = plan_status(tmp_plan)
+        st.markdown(
+            f"<div class='section-title'>Plan Metrics &nbsp; {status_badge_html(_status)}</div>",
+            unsafe_allow_html=True,
+        )
         m1, m2, m3 = st.columns(3)
-        m1.metric("Quota Rollup",     fmt_currency(metrics["quota_rollup"]))
-        m2.metric("Total Quota",      fmt_currency(metrics["total_quota"]),
-                  delta=f"×{quota_factor} factor")
-        m3.metric("Managed Quota",    fmt_currency(metrics["managed_quota"]),
-                  delta=f"{metrics['months_on_plan']} mo / {metrics['proration']:.0%}")
+        m1.metric("Base Salary",       fmt_currency(base_salary))
+        m2.metric("Annual Variable",   fmt_currency(variable))
+        m3.metric("Prorated Variable", fmt_currency(metrics["prorated_variable"]))
 
         m4, m5, m6 = st.columns(3)
-        m4.metric("Prorated Variable", fmt_currency(metrics["prorated_variable"]))
-        m5.metric("Base Commission Rate", f"{metrics['base_rate']:.2%}")
-        m6.metric("Months on Plan", metrics["months_on_plan"])
+        m4.metric("Months on Plan",       metrics["months_on_plan"])
+        m5.metric("Proration",            f"{metrics['proration']:.0%}")
+        m6.metric("Base Commission Rate", f"{metrics['base_rate']:.2%}")
 
-        st.markdown("#### 🎯 Accelerator Tiers")
-        t1, t2 = st.columns(2)
-        t1.metric("Tier 1 Threshold", fmt_currency(metrics["tier1_threshold"]),
-                  delta=f"Rate: {metrics['tier1_rate']:.2%}")
-        t2.metric("Tier 2 Threshold", fmt_currency(metrics["tier2_threshold"]),
-                  delta=f"Rate: {metrics['tier2_rate']:.2%}")
-
-        # ── Quarterly breakdown ────────────────────────────────────────────
-        st.markdown("#### 📅 Quarterly Breakdown")
-        qa, qb, qc, qd = st.columns(4)
+        # ── Quarterly Quota – Rollup (before factor) ───────────────────────
+        st.markdown(
+            "<div class='section-title'>Quarterly Quota — Rollup (before Quota Factor)</div>",
+            unsafe_allow_html=True,
+        )
+        qa, qb, qc, qd, qt = st.columns(5)
         qa.metric("Q1 (Feb–Apr)", fmt_currency(metrics["q1"]))
         qb.metric("Q2 (May–Jul)", fmt_currency(metrics["q2"]))
         qc.metric("Q3 (Aug–Oct)", fmt_currency(metrics["q3"]))
         qd.metric("Q4 (Nov–Jan)", fmt_currency(metrics["q4"]))
+        qt.metric("Total Rollup", fmt_currency(metrics["quota_rollup"]))
+
+        # ── Quarterly Quota – Adjusted (after factor) ──────────────────────
+        st.markdown(
+            f"<div class='section-title'>Quarterly Quota — Adjusted for Quota Factor ({quota_factor}×)</div>",
+            unsafe_allow_html=True,
+        )
+        ra, rb, rc, rd, rt = st.columns(5)
+        ra.metric("Q1 (Feb–Apr)", fmt_currency(metrics["q1_adjusted"]))
+        rb.metric("Q2 (May–Jul)", fmt_currency(metrics["q2_adjusted"]))
+        rc.metric("Q3 (Aug–Oct)", fmt_currency(metrics["q3_adjusted"]))
+        rd.metric("Q4 (Nov–Jan)", fmt_currency(metrics["q4_adjusted"]))
+        rt.metric("Total Quota",  fmt_currency(metrics["total_quota"]))
+
+        st.markdown(
+            "<div class='section-title'>Accelerator Tiers</div>",
+            unsafe_allow_html=True,
+        )
+        t1, t2, t3, t4 = st.columns(4)
+        t1.metric("Tier 1 Threshold", fmt_currency(metrics["tier1_threshold"]),
+                  delta=f"Rate: {metrics['tier1_rate']:.2%}")
+        t2.metric("Tier 2 Threshold", fmt_currency(metrics["tier2_threshold"]),
+                  delta=f"Rate: {metrics['tier2_rate']:.2%}")
+        t3.metric("Pilot Rate",          f"{metrics['pilot_rate']:.2%}")
+        t4.metric("Contract Break Rate", f"{metrics['contract_break_rate']:.2%}")
 
     # ── Save Plan ──────────────────────────────────────────────────────────
     st.markdown("---")
@@ -1173,7 +1302,7 @@ with tab_builder:
 # TAB 3 – PLANS OVERVIEW
 # ===========================================================================
 with tab_overview:
-    st.markdown("### 📊 Saved Plans Overview")
+    st.markdown("### Saved Plans Overview")
 
     if not st.session_state.plans:
         st.info("No plans saved yet. Use the **Plan Builder** tab to create and save a plan.")
@@ -1201,31 +1330,59 @@ with tab_overview:
 
         for plan_name, plan in plans_list:
             metrics = calculate_plan_metrics(plan)
-            cur = plan["currency"]
+            _status = plan_status(plan)
+            _badge  = status_badge_html(_status)
 
             with st.expander(
-                f"📁 {plan_name}  ·  {plan['segment']}  ·  {plan['region']}  ·  "
+                f"{plan_name}  ·  {plan['segment']}  ·  {plan['region']}  ·  "
                 f"{len(plan['aes'])} AEs  ·  "
-                f"Total Quota: {fmt_currency(metrics['total_quota'], cur)}",
+                f"Total Quota: {fmt_currency(metrics['total_quota'])}",
                 expanded=False,
             ):
                 ov1, ov2, ov3, ov4 = st.columns(4)
-                ov1.metric("Manager",     plan_name)
-                ov2.metric("Segment",     plan["segment"])
-                ov3.metric("Region",      plan["region"])
-                ov4.metric("Team Size",   len(plan["aes"]))
+                ov1.metric("Manager",   plan_name)
+                ov2.metric("Segment",   plan["segment"])
+                ov3.metric("Region",    plan["region"])
+                ov4.metric("Team Size", len(plan["aes"]))
 
-                om1, om2, om3, om4 = st.columns(4)
-                om1.metric("Quota Rollup",   fmt_currency(metrics["quota_rollup"], cur))
-                om2.metric("Total Quota",    fmt_currency(metrics["total_quota"],  cur))
-                om3.metric("Managed Quota",  fmt_currency(metrics["managed_quota"], cur))
-                om4.metric("Months on Plan", metrics["months_on_plan"])
+                st.markdown(
+                    f"<div style='margin-bottom:0.75rem;'>"
+                    f"<strong>Status:</strong> &nbsp; {_badge} &nbsp;&nbsp; "
+                    f"<strong>Plan Period:</strong> {plan['plan_start']} → {plan['plan_end']} &nbsp;&nbsp; "
+                    f"<strong>Months:</strong> {metrics['months_on_plan']} &nbsp;&nbsp; "
+                    f"<strong>Proration:</strong> {metrics['proration']:.0%}"
+                    f"</div>",
+                    unsafe_allow_html=True,
+                )
 
-                oq1, oq2, oq3, oq4 = st.columns(4)
-                oq1.metric("Q1 (Feb–Apr)", fmt_currency(metrics["q1"], cur))
-                oq2.metric("Q2 (May–Jul)", fmt_currency(metrics["q2"], cur))
-                oq3.metric("Q3 (Aug–Oct)", fmt_currency(metrics["q3"], cur))
-                oq4.metric("Q4 (Nov–Jan)", fmt_currency(metrics["q4"], cur))
+                om1, om2, om3 = st.columns(3)
+                om1.metric("Prorated Variable",   fmt_currency(metrics["prorated_variable"]))
+                om2.metric("Base Commission Rate", f"{metrics['base_rate']:.2%}")
+                om3.metric("Quota Factor",         f"{plan['quota_factor']}×")
+
+                # Quarterly Rollup (before factor)
+                st.markdown(
+                    "<div class='section-title'>Quarterly Quota — Rollup (before Quota Factor)</div>",
+                    unsafe_allow_html=True,
+                )
+                oqa, oqb, oqc, oqd, oqt = st.columns(5)
+                oqa.metric("Q1 (Feb–Apr)", fmt_currency(metrics["q1"]))
+                oqb.metric("Q2 (May–Jul)", fmt_currency(metrics["q2"]))
+                oqc.metric("Q3 (Aug–Oct)", fmt_currency(metrics["q3"]))
+                oqd.metric("Q4 (Nov–Jan)", fmt_currency(metrics["q4"]))
+                oqt.metric("Total Rollup", fmt_currency(metrics["quota_rollup"]))
+
+                # Quarterly Adjusted (after factor)
+                st.markdown(
+                    f"<div class='section-title'>Quarterly Quota — Adjusted for Quota Factor ({plan['quota_factor']}×)</div>",
+                    unsafe_allow_html=True,
+                )
+                ora, orb, orc, ord_, ort = st.columns(5)
+                ora.metric("Q1 (Feb–Apr)", fmt_currency(metrics["q1_adjusted"]))
+                orb.metric("Q2 (May–Jul)", fmt_currency(metrics["q2_adjusted"]))
+                orc.metric("Q3 (Aug–Oct)", fmt_currency(metrics["q3_adjusted"]))
+                ord_.metric("Q4 (Nov–Jan)", fmt_currency(metrics["q4_adjusted"]))
+                ort.metric("Total Quota",  fmt_currency(metrics["total_quota"]))
 
                 # Mini plan chart
                 plan_chart_df = pd.DataFrame({

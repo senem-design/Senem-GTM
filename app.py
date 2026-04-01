@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import io
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 from typing import Any
 
 import pandas as pd
@@ -92,6 +92,9 @@ FX_RATES   = {"USD": 1.00, "GBP": 1.34}
 
 DATA_PATH = "info/AEs and Managers - Sheet1.csv"
 
+FY26_START = date(2026, 2, 1)            # Start of FY26
+EFFECTIVE_UNTIL_DEFAULT = date(2028, 2, 1)  # Default effective-until for all plans
+
 # Default TBH compensation values (USD local variable / annual quota)
 DEFAULT_VARIABLE_ENTERPRISE = 120_000    # Enterprise AE base variable
 DEFAULT_VARIABLE_STANDARD   = 100_000   # Mid Market / Agency AE base variable
@@ -135,6 +138,77 @@ def _parse_date(val: Any) -> date | None:
         return pd.to_datetime(s).date()
     except Exception:
         return None
+
+
+# ---------------------------------------------------------------------------
+# AE version helpers
+# ---------------------------------------------------------------------------
+
+def _build_version_from_row(row: pd.Series, version_id: int = 0) -> dict:
+    """Build a version dict from a CSV AE row."""
+    start_d = row["Start Date"]
+    # effective_from = earlier of the AE's start date or FY26 start (2026-02-01)
+    eff_from = min(start_d, FY26_START) if isinstance(start_d, date) else FY26_START
+    return {
+        "version_id":        version_id,
+        "effective_from":    eff_from,
+        "effective_until":   EFFECTIVE_UNTIL_DEFAULT,
+        "name":              str(row["AEs"]),
+        "segment":           str(row["Segment"]),
+        "region":            str(row["Region"]),
+        "payment_frequency": str(row.get("Payment Frequency", "Monthly")),
+        "plan_period":       str(row.get("Plan period", "Annual")),
+        "local_currency":    str(row["Local Currency"]),
+        "fx":                float(row["FX"]),
+        "local_variable":    float(row["Local Variable"]),
+        "usd_variable":      float(row["USD Variable"]),
+        "commission_rate":   float(row["Commission Rate (Fixed)"]),
+        "usd_quota":         float(row["USD Quota (Annual)"]),
+        "start_date":        row["Start Date"],
+        "on_plan_date":      row["On Plan Date"],
+    }
+
+
+def _init_ae_versions(ae_df: pd.DataFrame) -> None:
+    """Populate st.session_state['ae_versions'] from ae_df (runs once per session)."""
+    if "ae_versions" not in st.session_state:
+        st.session_state["ae_versions"] = {}
+    for _, row in ae_df.iterrows():
+        ae_name = str(row["AEs"])
+        if ae_name not in st.session_state["ae_versions"]:
+            st.session_state["ae_versions"][ae_name] = [
+                _build_version_from_row(row, version_id=0)
+            ]
+
+
+def get_current_version(ae_name: str) -> dict | None:
+    """Return the active version for today, or the latest version if none covers today."""
+    versions = st.session_state["ae_versions"].get(ae_name, [])
+    if not versions:
+        return None
+    today = date.today()
+    for v in reversed(versions):
+        if v["effective_from"] <= today:
+            return v
+    return versions[-1]
+
+
+def ae_version_to_plan_dict(version: dict) -> dict:
+    """Convert an AE version dict to the plan AE dict format."""
+    return {
+        "name":            version["name"],
+        "status":          "Started",
+        "start_date":      version.get("start_date"),
+        "on_plan_date":    version.get("on_plan_date"),
+        "segment":         version["segment"],
+        "region":          version["region"],
+        "currency":        version["local_currency"],
+        "fx":              version["fx"],
+        "local_variable":  version["local_variable"],
+        "usd_variable":    version["usd_variable"],
+        "commission_rate": version["commission_rate"],
+        "usd_quota":       version["usd_quota"],
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -404,6 +478,7 @@ def _init_state():
         "tbh_counter":        {},
         "builder_selected_aes": [],
         "builder_tbhs":       [],
+        "ae_versions":        {},
     }
     for k, v in defaults.items():
         if k not in st.session_state:
@@ -416,6 +491,7 @@ _init_state()
 # Load data
 # ---------------------------------------------------------------------------
 ae_df, mgr_df = load_data()
+_init_ae_versions(ae_df)
 
 # ---------------------------------------------------------------------------
 # Sidebar
@@ -487,39 +563,205 @@ with tab_roster:
 
     st.markdown("### 👥 Account Executives")
 
-    # Colour-coded segment display
-    def _seg_html(seg: str) -> str:
-        cls = {
-            "Enterprise":  "seg-enterprise",
-            "Mid Market":  "seg-mid-market",
-            "Agency":      "seg-agency",
-        }.get(seg, "")
-        return f'<span class="{cls}">{seg}</span>'
+    # Build display from current versions (reflects any overrides)
+    current_version_rows = []
+    for _, row in filtered_ae.iterrows():
+        ae_name = str(row["AEs"])
+        version = get_current_version(ae_name)
+        if version:
+            n_ver = len(st.session_state["ae_versions"].get(ae_name, []))
+            current_version_rows.append({
+                "AEs":                   ae_name,
+                "Segment":               version["segment"],
+                "Region":                version["region"],
+                "Start Date":            str(version.get("start_date", "")),
+                "On Plan Date":          str(version.get("on_plan_date", "")),
+                "Local Currency":        version["local_currency"],
+                "FX":                    version["fx"],
+                "Local Variable":        f"{version['local_variable']:,.0f}",
+                "USD Variable":          fmt_currency(version["usd_variable"]),
+                "Commission Rate":       f"{version['commission_rate']:.2%}",
+                "USD Quota (Annual)":    fmt_currency(version["usd_quota"]),
+                "Effective From":        str(version["effective_from"]),
+                "Effective Until":       str(version["effective_until"]),
+                "Versions":              n_ver,
+            })
 
-    display_df = filtered_ae[[
-        "AEs", "Segment", "Region", "Start Date", "On Plan Date",
-        "Local Currency", "FX", "Local Variable", "USD Variable",
-        "Commission Rate (Fixed)", "USD Quota (Annual)",
-    ]].copy()
-
-    display_df["Start Date"]   = display_df["Start Date"].astype(str)
-    display_df["On Plan Date"] = display_df["On Plan Date"].astype(str)
-    display_df["Commission Rate (Fixed)"] = display_df["Commission Rate (Fixed)"].apply(
-        lambda x: f"{x:.2%}"
-    )
-    display_df["USD Variable"]       = display_df["USD Variable"].apply(lambda x: fmt_currency(x))
-    display_df["USD Quota (Annual)"] = display_df["USD Quota (Annual)"].apply(lambda x: fmt_currency(x))
-    display_df["Local Variable"]     = display_df["Local Variable"].apply(lambda x: f"{x:,.0f}")
-
+    disp_df = pd.DataFrame(current_version_rows) if current_version_rows else pd.DataFrame()
     st.dataframe(
-        display_df,
+        disp_df,
         use_container_width=True,
         hide_index=True,
         column_config={
-            "Segment": st.column_config.TextColumn("Segment"),
-            "Commission Rate (Fixed)": st.column_config.TextColumn("Commission %"),
+            "Segment":    st.column_config.TextColumn("Segment"),
+            "Commission Rate": st.column_config.TextColumn("Commission %"),
+            "Versions":   st.column_config.NumberColumn("Versions", format="%d"),
         },
     )
+
+    # ── Per-AE Edit section ───────────────────────────────────────────────
+    st.markdown("---")
+    st.markdown("#### ✏️ Edit AE Records")
+    st.caption(
+        "Click **✏️ Edit** to override any field for an AE. "
+        "Edits create a new versioned plan; the original CSV is not modified."
+    )
+
+    for _, row in filtered_ae.iterrows():
+        ae_name = str(row["AEs"])
+        current_v = get_current_version(ae_name)
+        if not current_v:
+            continue
+
+        versions = st.session_state["ae_versions"].get(ae_name, [])
+        n_ver = len(versions)
+        ver_badge = f"  ·  **{n_ver} versions**" if n_ver > 1 else ""
+
+        col_info, col_btn = st.columns([6, 1])
+        col_info.markdown(
+            f"**{ae_name}** · {current_v['segment']} · {current_v['region']}"
+            f" · Eff: {current_v['effective_from']} → {current_v['effective_until']}"
+            f"{ver_badge}"
+        )
+        if col_btn.button("✏️ Edit", key=f"edit_btn_{ae_name}"):
+            st.session_state[f"ae_edit_open_{ae_name}"] = not st.session_state.get(
+                f"ae_edit_open_{ae_name}", False
+            )
+
+        if st.session_state.get(f"ae_edit_open_{ae_name}", False):
+            with st.container():
+                st.markdown(f"**Editing: {ae_name}**")
+                ec1, ec2, ec3 = st.columns(3)
+
+                with ec1:
+                    new_name = st.text_input(
+                        "Name", value=current_v["name"], key=f"edit_name_{ae_name}"
+                    )
+                    new_seg = st.selectbox(
+                        "Segment", SEGMENTS,
+                        index=SEGMENTS.index(current_v["segment"]) if current_v["segment"] in SEGMENTS else 0,
+                        key=f"edit_seg_{ae_name}",
+                    )
+                    new_reg = st.selectbox(
+                        "Region", REGIONS,
+                        index=REGIONS.index(current_v["region"]) if current_v["region"] in REGIONS else 0,
+                        key=f"edit_reg_{ae_name}",
+                    )
+                    new_pay_freq = st.text_input(
+                        "Payment Frequency",
+                        value=current_v.get("payment_frequency", "Monthly"),
+                        key=f"edit_pay_{ae_name}",
+                    )
+                    new_plan_period = st.text_input(
+                        "Plan Period",
+                        value=current_v.get("plan_period", "Annual"),
+                        key=f"edit_period_{ae_name}",
+                    )
+
+                with ec2:
+                    new_currency = st.selectbox(
+                        "Local Currency", ["USD", "GBP"],
+                        index=0 if current_v["local_currency"] == "USD" else 1,
+                        key=f"edit_cur_{ae_name}",
+                    )
+                    new_fx = st.number_input(
+                        "FX Rate", min_value=0.0001, value=float(current_v["fx"]),
+                        step=0.01, format="%.4f", key=f"edit_fx_{ae_name}",
+                    )
+                    new_local_var = st.number_input(
+                        "Local Variable", min_value=0.0,
+                        value=float(current_v["local_variable"]),
+                        step=5000.0, format="%.0f", key=f"edit_local_var_{ae_name}",
+                    )
+                    new_usd_var = st.number_input(
+                        "USD Variable", min_value=0.0,
+                        value=float(current_v["usd_variable"]),
+                        step=5000.0, format="%.0f", key=f"edit_usd_var_{ae_name}",
+                    )
+
+                with ec3:
+                    new_cr = st.number_input(
+                        "Commission Rate %", min_value=0.0, max_value=100.0,
+                        value=float(current_v["commission_rate"] * 100),
+                        step=0.5, format="%.2f", key=f"edit_cr_{ae_name}",
+                    )
+                    new_quota = st.number_input(
+                        "USD Quota (Annual)", min_value=0.0,
+                        value=float(current_v["usd_quota"]),
+                        step=10000.0, format="%.0f", key=f"edit_quota_{ae_name}",
+                    )
+                    new_start = st.date_input(
+                        "Start Date",
+                        value=current_v.get("start_date") or date.today(),
+                        key=f"edit_start_{ae_name}",
+                    )
+                    new_on_plan = st.date_input(
+                        "On Plan Date",
+                        value=current_v.get("on_plan_date") or date.today(),
+                        key=f"edit_on_plan_{ae_name}",
+                    )
+
+                new_eff_from = st.date_input(
+                    "🗓️ New Effective As Of (start of this new version)",
+                    value=date.today(),
+                    key=f"edit_eff_{ae_name}",
+                )
+
+                btn_save_col, btn_cancel_col = st.columns(2)
+                if btn_save_col.button(
+                    "💾 Save New Version", key=f"save_ver_{ae_name}", type="primary"
+                ):
+                    new_version = {
+                        "version_id":        n_ver,
+                        "effective_from":    new_eff_from,
+                        "effective_until":   EFFECTIVE_UNTIL_DEFAULT,
+                        "name":              new_name,
+                        "segment":           new_seg,
+                        "region":            new_reg,
+                        "payment_frequency": new_pay_freq,
+                        "plan_period":       new_plan_period,
+                        "local_currency":    new_currency,
+                        "fx":                new_fx,
+                        "local_variable":    new_local_var,
+                        "usd_variable":      new_usd_var,
+                        "commission_rate":   new_cr / 100.0,
+                        "usd_quota":         new_quota,
+                        "start_date":        new_start,
+                        "on_plan_date":      new_on_plan,
+                    }
+                    # Update previous version's effective_until
+                    st.session_state["ae_versions"][ae_name][-1]["effective_until"] = (
+                        new_eff_from - timedelta(days=1)
+                    )
+                    st.session_state["ae_versions"][ae_name].append(new_version)
+                    st.session_state[f"ae_edit_open_{ae_name}"] = False
+                    st.success(
+                        f"✅ New version saved for **{ae_name}** "
+                        f"(effective {new_eff_from})"
+                    )
+                    st.rerun()
+
+                if btn_cancel_col.button("❌ Cancel", key=f"cancel_ver_{ae_name}"):
+                    st.session_state[f"ae_edit_open_{ae_name}"] = False
+                    st.rerun()
+
+                # Version history (only show when there are multiple versions)
+                if n_ver > 1:
+                    st.markdown("---")
+                    st.markdown("**📜 Version History**")
+                    for v in versions:
+                        is_current = v.get("version_id") == current_v.get("version_id")
+                        indicator = "🟢 **(current)**" if is_current else "⚪"
+                        st.markdown(
+                            f"{indicator} "
+                            f"**v{v['version_id'] + 1}** · "
+                            f"Effective: `{v['effective_from']}` → `{v['effective_until']}` · "
+                            f"Segment: {v['segment']} · Region: {v['region']} · "
+                            f"USD Variable: {fmt_currency(v['usd_variable'])} · "
+                            f"Quota: {fmt_currency(v['usd_quota'])}"
+                        )
+
+        st.divider()
 
     # Segment chart
     seg_counts = filtered_ae["Segment"].value_counts().reset_index()
@@ -638,6 +880,38 @@ with tab_builder:
     )
     st.session_state["builder_selected_aes"] = selected_ae_names
 
+    # ── Version picker (shown only for AEs with multiple versions) ─────────
+    selected_ae_versions: dict[str, dict] = {}
+    aes_with_multiple = [
+        n for n in selected_ae_names
+        if len(st.session_state["ae_versions"].get(n, [])) > 1
+    ]
+    if aes_with_multiple:
+        st.markdown("##### 📅 Version Selection")
+        st.caption("These AEs have multiple plan versions — select which one to use:")
+        for ae_name in aes_with_multiple:
+            ae_vers = st.session_state["ae_versions"].get(ae_name, [])
+            ver_labels = [
+                f"v{v['version_id'] + 1}: {v['effective_from']} → {v['effective_until']}"
+                f"  |  {v['segment']} · {v['region']}"
+                f"  |  Quota: {fmt_currency(v['usd_quota'])}"
+                for v in ae_vers
+            ]
+            cur_v = get_current_version(ae_name)
+            default_idx = (
+                ae_vers.index(cur_v)
+                if cur_v and cur_v in ae_vers
+                else len(ae_vers) - 1
+            )
+            sel_idx = st.selectbox(
+                ae_name,
+                range(len(ae_vers)),
+                format_func=lambda i, vl=ver_labels: vl[i],
+                index=default_idx,
+                key=f"version_picker_{ae_name}",
+            )
+            selected_ae_versions[ae_name] = ae_vers[sel_idx]
+
     # ── TBH Quick-Add ──────────────────────────────────────────────────────
     st.markdown("#### ➕ Add TBH Placeholders")
     tbh_combos = [
@@ -750,9 +1024,19 @@ with tab_builder:
     plan_aes: list[dict] = []
 
     for ae_name in selected_ae_names:
-        rows = ae_df[ae_df["AEs"] == ae_name]
-        if not rows.empty:
-            plan_aes.append(ae_row_to_dict(rows.iloc[0]))
+        # Use explicitly selected version, or fall back to current version
+        if ae_name in selected_ae_versions:
+            version = selected_ae_versions[ae_name]
+        else:
+            version = get_current_version(ae_name)
+
+        if version:
+            plan_aes.append(ae_version_to_plan_dict(version))
+        else:
+            # Fallback: read directly from ae_df
+            rows = ae_df[ae_df["AEs"] == ae_name]
+            if not rows.empty:
+                plan_aes.append(ae_row_to_dict(rows.iloc[0]))
 
     for tbh in st.session_state["builder_tbhs"]:
         tbh_dict = dict(tbh)

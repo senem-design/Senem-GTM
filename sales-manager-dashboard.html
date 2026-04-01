@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Manager Plan Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+        
+        .roster-section {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .manager-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .manager-info {
+            flex: 1;
+        }
+        
+        .manager-info h3 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .manager-dates {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background: #764ba2;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        button.secondary {
+            background: #6c757d;
+            margin-left: 10px;
+        }
+        
+        button.secondary:hover {
+            background: #5a6268;
+        }
+        
+        button.danger {
+            background: #e74c3c;
+        }
+        
+        button.danger:hover {
+            background: #c0392b;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 0.95em;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .roster-item {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .roster-item.removed {
+            opacity: 0.5;
+            text-decoration: line-through;
+        }
+        
+        .ae-name {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .ae-details {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .ae-quota {
+            font-weight: 600;
+            color: #667eea;
+            min-width: 120px;
+            text-align: right;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 50px auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+        
+        .modal-header h2 {
+            color: #667eea;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .close-btn:hover {
+            color: #333;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+        
+        .quarterly-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 20px;
+        }
+        
+        .quarter-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .quarter-label {
+            font-size: 0.85em;
+            opacity: 0.9;
+            margin-bottom: 5px;
+        }
+        
+        .quarter-value {
+            font-size: 1.4em;
+            font-weight: 700;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        tr:hover {
+            background: #f8f9fa;
+        }
+        
+        .segment-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        
+        .segment-enterprise {
+            background: #dfe6e9;
+            color: #2c3e50;
+        }
+        
+        .segment-mid-market {
+            background: #a9dcff;
+            color: #0c5460;
+        }
+        
+        .segment-agency {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .add-ae-section {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #f0f0f0;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .button-group button {
+            flex: 1;
+        }
+        
+        .success {
+            color: #27ae60;
+        }
+        
+        .error {
+            color: #e74c3c;
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+        
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #999;
+        }
+        
+        .empty-state h3 {
+            color: #666;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>📊 Sales Manager Plan Dashboard</h1>
+            <p>Create and manage instant sales manager plans with team quotas</p>
+        </header>
+        
+        <div class="main-content">
+            <!-- Left Sidebar: Manager Roster -->
+            <div class="card">
+                <h2>Manager Roster</h2>
+                <div id="managerRoster" class="roster-section">
+                    <!-- Populated by JavaScript -->
+                </div>
+            </div>
+            
+            <!-- Right Panel: Plan Management -->
+            <div class="card">
+                <h2>Plan Management</h2>
+                <div id="planContainer">
+                    <div class="empty-state">
+                        <h3>👋 Select a Manager</h3>
+                        <p>Choose a manager from the roster to create or view their plan</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Plan Details Card -->
+        <div class="card" id="planDetailsCard" style="display: none;"> 
+            <h2>Plan Summary & Analytics</h2>
+            <div id="planDetails"></div>
+        </div>
+    </div>
+    
+    <!-- Create Manager Plan Modal -->
+    <div id="createPlanModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create Manager Plan</h2>
+                <button class="close-btn" onclick="closeModal('createPlanModal')">×</button>
+            </div>
+            <form id="createPlanForm">
+                <div class="form-group">
+                    <label>Manager Name</label>
+                    <input type="text" id="managerName" required>
+                </div>
+                <div class="form-group">
+                    <label>Segment</label>
+                    <select id="managerSegment" required>
+                        <option value="">Select Segment</option>
+                        <option value="Enterprise">Enterprise</option>
+                        <option value="Mid Market">Mid Market</option>
+                        <option value="Agency">Agency</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Plan Effective Date</label>
+                    <input type="date" id="planEffectiveDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Plan End Date</label>
+                    <input type="date" id="planEndDate" required>
+                </div>
+                <div class="button-group">
+                    <button type="submit">Create Plan</button>
+                    <button type="button" class="secondary" onclick="closeModal('createPlanModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Add AE Modal -->
+    <div id="addAEModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Add AE to Plan</h2>
+                <button class="close-btn" onclick="closeModal('addAEModal')">×</button>
+            </div>
+            <form id="addAEForm">
+                <div class="form-group">
+                    <label>AE Name</label>
+                    <input type="text" id="aeName" placeholder="e.g., John Smith" required>
+                </div>
+                <div class="form-group">
+                    <label>Segment</label>
+                    <select id="aeSegment" required>
+                        <option value="">Select Segment</option>
+                        <option value="Enterprise">Enterprise</option>
+                        <option value="Mid Market">Mid Market</option>
+                        <option value="Agency">Agency</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Plan Start Date</label>
+                    <input type="date" id="aePlanStartDate" required>
+                </div>
+                <div class="form-group">
+                    <label>Annual USD Quota</label>
+                    <input type="number" id="aeAnnualQuota" placeholder="e.g., 1000000" required min="0" step="1000">
+                </div>
+                <div class="form-group">
+                    <label>Commission Rate (%)</label>
+                    <input type="number" id="aeCommissionRate" placeholder="e.g., 12" required min="0" max="100" step="0.1">
+                </div>
+                <div class="button-group">
+                    <button type="submit">Add AE</button>
+                    <button type="button" class="secondary" onclick="closeModal('addAEModal')">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Data structure
+        let managers = [
+            { id: 1, name: 'Scott Schachter', segment: 'Mid Market', startDate: '2026-03-01', region: 'NYC', status: 'Active' },
+            { id: 2, name: 'Charlie Demuth', segment: 'Enterprise', startDate: '2025-02-01', region: 'NYC', status: 'Active' },
+            { id: 3, name: 'Tessa McManus', segment: 'Mid Market', startDate: '2026-04-01', region: 'LDN', status: 'Active' },
+            { id: 4, name: 'Kareem Agha', segment: 'Enterprise', startDate: '2026-04-01', region: 'NYC', status: 'Active' }
+        ];
+        
+        let plans = {};
+        
+        // Sample AEs from the roster
+        const sampleAEs = [
+            { name: 'Matthew Brown', segment: 'Enterprise', annualQuota: 1166667, commissionRate: 12 },
+            { name: 'Ben Grosse', segment: 'Agency', annualQuota: 1000000, commissionRate: 12 },
+            { name: 'Willie Goetz', segment: 'Mid Market', annualQuota: 1000000, commissionRate: 12 },
+            { name: 'Connor Joyce', segment: 'Enterprise', annualQuota: 1166667, commissionRate: 12 },
+            { name: 'Hugo Howard', segment: 'Enterprise', annualQuota: 1250000, commissionRate: 12 }
+        ];
+        
+        let currentManagerId = null;
+        
+        // Initialize
+        function init() {
+            renderManagerRoster();
+            initializePlans();
+        }
+        
+        function initializePlans() {
+            managers.forEach(manager => {
+                if (!plans[manager.id]) {
+                    plans[manager.id] = {
+                        name: manager.name,
+                        segment: manager.segment,
+                        effectiveDate: manager.startDate,
+                        endDate: new Date(new Date(manager.startDate).setFullYear(new Date(manager.startDate).getFullYear() + 1)).toISOString().split('T')[0],
+                        aes: []
+                    };
+                }
+            });
+        }
+        
+        function renderManagerRoster() {
+            const roster = document.getElementById('managerRoster');
+            roster.innerHTML = managers.map(manager => `
+                <div class="roster-item" onclick="selectManager(${manager.id})" style="cursor: pointer; border-left-color: ${currentManagerId === manager.id ? '#27ae60' : '#667eea'}; background: ${currentManagerId === manager.id ? '#e8f8f5' : '#f8f9fa'};">
+                    <div>
+                        <div class="ae-name">${manager.name}</div>
+                        <div class="ae-details">
+                            <span class="segment-badge segment-${manager.segment.toLowerCase().replace(' ', '-')}" >${manager.segment}</span>
+                            <div style="margin-top: 5px; font-size: 0.8em;">📍 ${manager.region} • Effective: ${manager.startDate}</div>
+                        </div>
+                    </div>
+                    <button class="secondary" onclick="editManager(event, ${manager.id})">Edit</button>
+                </div>
+            `).join('');
+        }
+        
+        function selectManager(managerId) {
+            currentManagerId = managerId;
+            renderManagerRoster();
+            renderPlanEditor();
+            renderPlanDetails();
+            document.getElementById('planDetailsCard').style.display = 'block';
+        }
+        
+        function renderPlanEditor() {
+            const plan = plans[currentManagerId];
+            const manager = managers.find(m => m.id === currentManagerId);
+            
+            const content = `
+                <div class="manager-header">
+                    <div class="manager-info">
+                        <h3>${plan.name}</h3>
+                        <div class="manager-dates">
+                            Plan Period: ${plan.effectiveDate} to ${plan.endDate}
+                        </div>
+                    </div>
+                    <button onclick="openCreatePlanModal(${currentManagerId})">Edit Plan</button>
+                </div>
+                
+                <h3 style="color: #333; margin-top: 20px; margin-bottom: 15px;">Team Members (${plan.aes.length})</h3>
+                
+                ${plan.aes.length === 0 ? `
+                    <div class="empty-state" style="background: #f8f9fa; padding: 30px; border-radius: 8px;">
+                        <p>No AEs assigned yet</p>
+                    </div>
+                ` : `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>AE Name</th>
+                                <th>Segment</th>
+                                <th>Plan Start</th>
+                                <th>Annual Quota</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${plan.aes.map((ae, idx) => `
+                                <tr>
+                                    <td><strong>${ae.name}</strong></td>
+                                    <td><span class="segment-badge segment-${ae.segment.toLowerCase().replace(' ', '-')}" >${ae.segment}</span></td>
+                                    <td>${ae.planStartDate}</td>
+                                    <td style="color: #667eea; font-weight: 600;">$${formatCurrency(ae.annualQuota)}</td>
+                                    <td>
+                                        <button class="danger" onclick="removeAE(${currentManagerId}, ${idx})" style="padding: 5px 10px; font-size: 0.85em;">Remove</button>
+                                    </td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `}
+                
+                <div class="add-ae-section">
+                    <button onclick="openAddAEModal()" style="width: 100%;">+ Add AE to Team</button>
+                </div>
+            `;
+            
+            document.getElementById('planContainer').innerHTML = content;
+        }
+        
+        function renderPlanDetails() {
+            const plan = plans[currentManagerId];
+            
+            // Calculate monthly quotas
+            const startDate = new Date(plan.effectiveDate);
+            const endDate = new Date(plan.endDate);
+            const monthsInPlan = (endDate.getFullYear() - startDate.getFullYear()) * 12 + (endDate.getMonth() - startDate.getMonth());
+            
+            // Calculate total and monthly breakdown
+            let totalAnnualQuota = 0;
+            const monthlyBreakdown = {};
+            
+            plan.aes.forEach(ae => {
+                totalAnnualQuota += ae.annualQuota;
+                
+                // Calculate monthly quota for each AE
+                const aeStartDate = new Date(ae.planStartDate);
+                const monthlyQuota = ae.annualQuota / 12;
+                
+                for (let i = 0; i < monthsInPlan; i++) {
+                    const monthDate = new Date(startDate);
+                    monthDate.setMonth(monthDate.getMonth() + i);
+                    const monthKey = monthDate.toISOString().split('T')[0].slice(0, 7);
+                    
+                    if (aeStartDate <= monthDate) {
+                        monthlyBreakdown[monthKey] = (monthlyBreakdown[monthKey] || 0) + monthlyQuota;
+                    }
+                }
+            });
+            
+            // Calculate quarterly quotas
+            const q1Start = startDate.getMonth() < 3 ? startDate.getFullYear() : startDate.getFullYear() + 1;
+            const quarters = {
+                'Q1': 0,
+                'Q2': 0,
+                'Q3': 0,
+                'Q4': 0
+            };
+            
+            plan.aes.forEach(ae => {
+                const quarterlyQuota = ae.annualQuota / 4;
+                // Simplified quarterly calculation
+                quarters['Q1'] += quarterlyQuota;
+                quarters['Q2'] += quarterlyQuota;
+                quarters['Q3'] += quarterlyQuota;
+                quarters['Q4'] += quarterlyQuota;
+            });
+            
+            const managerMonthlyQuota = (totalAnnualQuota / 12).toFixed(2);
+            
+            const content = `
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-label">Total Annual Quota</div>
+                        <div class="stat-value">$${formatCurrency(totalAnnualQuota)}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Monthly Quota (Avg)</div>
+                        <div class="stat-value">$${formatCurrency(managerMonthlyQuota)}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Team Size</div>
+                        <div class="stat-value">${plan.aes.length}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-label">Plan Duration</div>
+                        <div class="stat-value">${monthsInPlan} months</div>
+                    </div>
+                </div>
+                
+                <h3 style="color: #333; margin-top: 30px; margin-bottom: 15px;">Quarterly Breakdown</h3>
+                <div class="quarterly-grid">
+                    ${Object.entries(quarters).map(([q, value]) => `
+                        <div class="quarter-box">
+                            <div class="quarter-label">${q}</div>
+                            <div class="quarter-value">$${formatCurrency(value)}</div>
+                        </div>
+                    `).join('')}
+                </div>
+                
+                <h3 style="color: #333; margin-top: 30px; margin-bottom: 15px;">AE Quota Breakdown</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>AE Name</th>
+                            <th>Segment</th>
+                            <th>Annual Quota</th>
+                            <th>Monthly Quota</th>
+                            <th>Commission Rate</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${plan.aes.map(ae => `
+                            <tr>
+                                <td><strong>${ae.name}</strong></td>
+                                <td><span class="segment-badge segment-${ae.segment.toLowerCase().replace(' ', '-')}" >${ae.segment}</span></td>
+                                <td style="color: #667eea; font-weight: 600;">$${formatCurrency(ae.annualQuota)}</td>
+                                <td style="color: #27ae60; font-weight: 600;">$${formatCurrency(ae.annualQuota / 12)}</td>
+                                <td>${ae.commissionRate}%</td>
+                            </tr>
+                        `).join('')}
+                        <tr style="background: #f8f9fa; font-weight: 700;">
+                            <td colspan="2">TOTAL</td>
+                            <td style="color: #667eea;">$${formatCurrency(totalAnnualQuota)}</td>
+                            <td style="color: #27ae60;">$${formatCurrency(managerMonthlyQuota)}</td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            `;
+            
+            document.getElementById('planDetails').innerHTML = content;
+        }
+        
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('en-US', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(value);
+        }
+        
+        function openCreatePlanModal(managerId) {
+            const plan = plans[managerId];
+            const manager = managers.find(m => m.id === managerId);
+            
+            document.getElementById('managerName').value = manager.name;
+            document.getElementById('managerSegment').value = manager.segment;
+            document.getElementById('planEffectiveDate').value = plan.effectiveDate;
+            document.getElementById('planEndDate').value = plan.endDate;
+            
+            document.getElementById('createPlanForm').onsubmit = function(e) {
+                e.preventDefault();
+                plans[managerId].effectiveDate = document.getElementById('planEffectiveDate').value;
+                plans[managerId].endDate = document.getElementById('planEndDate').value;
+                closeModal('createPlanModal');
+                renderPlanDetails();
+                showMessage('Plan updated successfully!', 'success');
+            };
+            
+            openModal('createPlanModal');
+        }
+        
+        function openAddAEModal() {
+            document.getElementById('addAEForm').onsubmit = function(e) {
+                e.preventDefault();
+                const ae = {
+                    name: document.getElementById('aeName').value,
+                    segment: document.getElementById('aeSegment').value,
+                    planStartDate: document.getElementById('aePlanStartDate').value,
+                    annualQuota: parseFloat(document.getElementById('aeAnnualQuota').value),
+                    commissionRate: parseFloat(document.getElementById('aeCommissionRate').value)
+                };
+                
+                plans[currentManagerId].aes.push(ae);
+                closeModal('addAEModal');
+                renderPlanEditor();
+                renderPlanDetails();
+                showMessage('AE added successfully!', 'success');
+                document.getElementById('addAEForm').reset();
+            };
+            
+            openModal('addAEModal');
+        }
+        
+        function removeAE(managerId, aeIndex) {
+            if (confirm('Remove this AE from the plan?')) {
+                plans[managerId].aes.splice(aeIndex, 1);
+                renderPlanEditor();
+                renderPlanDetails();
+                showMessage('AE removed from plan', 'success');
+            }
+        }
+        
+        function editManager(event, managerId) {
+            event.stopPropagation();
+            alert('Edit manager details feature coming soon!');
+        }
+        
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+        
+        function showMessage(text, type) {
+            const message = document.createElement('div');
+            message.className = `message ${type}`;
+            message.textContent = text;
+            document.body.insertBefore(message, document.body.firstChild);
+            setTimeout(() => message.remove(), 3000);
+        }
+        
+        window.onclick = function(event) {
+            const modal = event.target;
+            if (modal.classList.contains('modal')) {
+                modal.style.display = 'none';
+            }
+        };
+        
+        // Initialize on page load
+        init();
+    </script>
+</body>
+</html>

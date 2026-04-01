@@ -119,7 +119,7 @@ def _clean_pct(val: Any) -> float:
 def _parse_date(val: Any) -> date | None:
     if pd.isna(val):
         return None
-    for fmt in ("%m/%d/%Y", "%m/%d/%y", "%m/%d/%Y", "%-m/%-d/%Y"):
+    for fmt in ("%m/%d/%Y", "%m/%d/%y", "%-m/%-d/%Y"):
         try:
             return datetime.strptime(str(val).strip(), fmt).date()
         except ValueError:
@@ -432,7 +432,7 @@ st.markdown(
     """
     <div class="gtm-header">
       <h1>📊 GTM Sales Manager Planner</h1>
-      <p>FY2026 · Feb 1 2026 – Jan 31 2027 · Quota, Ramp & Compensation Planning</p>
+      <p>FY2026 · Feb 1, 2026 – Jan 31, 2027 · Quota, Ramp & Compensation Planning</p>
     </div>
     """,
     unsafe_allow_html=True,
@@ -643,7 +643,7 @@ with tab_builder:
             cur = CURRENCIES[reg]
             fx  = FX_RATES[cur]
             default_local_var = 120000 if seg == "Enterprise" else 100000
-            default_quota     = 1000000 if seg != "Enterprise" else 1166667
+            default_quota     = 1166667 if seg == "Enterprise" else 1000000
 
             st.session_state["builder_tbhs"].append({
                 "name":            f"TBH – {seg} {reg} #{num}",

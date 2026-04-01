@@ -92,6 +92,12 @@ FX_RATES   = {"USD": 1.00, "GBP": 1.34}
 
 DATA_PATH = "info/AEs and Managers - Sheet1.csv"
 
+# Default TBH compensation values (USD local variable / annual quota)
+DEFAULT_VARIABLE_ENTERPRISE = 120_000    # Enterprise AE base variable
+DEFAULT_VARIABLE_STANDARD   = 100_000   # Mid Market / Agency AE base variable
+DEFAULT_QUOTA_ENTERPRISE    = 1_166_667  # $140k variable / 12% commission rate
+DEFAULT_QUOTA_STANDARD      = 1_000_000  # $120k variable / 12% commission rate
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -119,13 +125,14 @@ def _clean_pct(val: Any) -> float:
 def _parse_date(val: Any) -> date | None:
     if pd.isna(val):
         return None
-    for fmt in ("%m/%d/%Y", "%m/%d/%y", "%-m/%-d/%Y"):
+    s = str(val).strip()
+    for fmt in ("%m/%d/%Y", "%m/%d/%y", "%#m/%#d/%Y"):
         try:
-            return datetime.strptime(str(val).strip(), fmt).date()
+            return datetime.strptime(s, fmt).date()
         except ValueError:
             continue
     try:
-        return pd.to_datetime(str(val)).date()
+        return pd.to_datetime(s).date()
     except Exception:
         return None
 
@@ -134,20 +141,22 @@ def _parse_date(val: Any) -> date | None:
 # Ramp schedule
 # ---------------------------------------------------------------------------
 
+_RAMP_M3_9 = 1 / 12                    # 8.3333...%
+_RAMP_M10_12 = (1 - 0.03 - 7 / 12) / 3  # 12.8889...%
+
+
 def get_ramp_pct(month_num: int) -> float:
     """Return ramp % for a 1-indexed employment month."""
-    if month_num <= 0:
-        return 0.0
-    if month_num == 1:
+    if month_num <= 1:
         return 0.0
     elif month_num == 2:
         return 0.03
     elif 3 <= month_num <= 9:
-        return 0.0833
+        return _RAMP_M3_9
     elif 10 <= month_num <= 12:
-        return 0.1289
+        return _RAMP_M10_12
     else:  # 13+
-        return 0.0833
+        return _RAMP_M3_9
 
 
 def calc_monthly_quota(annual_quota: float, on_plan_date: date, fiscal_month: date) -> float:
@@ -176,12 +185,18 @@ def calculate_plan_metrics(plan: dict) -> dict:
     months_on_plan = calculate_months_on_plan(plan["plan_start"], plan["plan_end"])
     proration = months_on_plan / 12.0
 
+    plan_start = plan["plan_start"]
+    plan_end = plan["plan_end"]
+
     ae_monthly: dict[str, list[float]] = {}
     for ae in aes:
-        monthly = [
-            calc_monthly_quota(ae["usd_quota"], ae["on_plan_date"], fm)
-            for fm in FISCAL_MONTHS
-        ]
+        monthly = []
+        for fm in FISCAL_MONTHS:
+            # Only count months within the manager's plan period
+            if fm < plan_start or fm > plan_end:
+                monthly.append(0.0)
+            else:
+                monthly.append(calc_monthly_quota(ae["usd_quota"], ae["on_plan_date"], fm))
         ae_monthly[ae["name"]] = monthly
 
     total_by_month = [
@@ -642,8 +657,8 @@ with tab_builder:
             num = st.session_state["tbh_counter"][key]
             cur = CURRENCIES[reg]
             fx  = FX_RATES[cur]
-            default_local_var = 120000 if seg == "Enterprise" else 100000
-            default_quota     = 1166667 if seg == "Enterprise" else 1000000
+            default_local_var = DEFAULT_VARIABLE_ENTERPRISE if seg == "Enterprise" else DEFAULT_VARIABLE_STANDARD
+            default_quota     = DEFAULT_QUOTA_ENTERPRISE if seg == "Enterprise" else DEFAULT_QUOTA_STANDARD
 
             st.session_state["builder_tbhs"].append({
                 "name":            f"TBH – {seg} {reg} #{num}",

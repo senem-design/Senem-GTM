@@ -280,14 +280,14 @@ def calculate_plan_metrics(plan: dict) -> dict:
     quota_rollup = sum(total_by_month)
 
     total_quota    = quota_rollup * plan["quota_factor"]
-    prorated_quota = total_quota * proration
+    managed_quota  = total_quota  # rollup already covers only plan-period months
 
     prorated_variable = plan["variable"] * proration
-    base_rate = prorated_variable / prorated_quota if prorated_quota > 0 else 0.0
+    base_rate = prorated_variable / managed_quota if managed_quota > 0 else 0.0
 
-    tier1_threshold = prorated_quota
+    tier1_threshold = managed_quota
     tier1_rate      = base_rate * 1.25
-    tier2_threshold = prorated_quota * 1.5
+    tier2_threshold = managed_quota * 1.5
     tier2_rate      = base_rate * 1.5
 
     q1 = sum(total_by_month[0:3])
@@ -300,7 +300,7 @@ def calculate_plan_metrics(plan: dict) -> dict:
         "total_by_month":   total_by_month,
         "quota_rollup":     quota_rollup,
         "total_quota":      total_quota,
-        "prorated_quota":   prorated_quota,
+        "managed_quota":    managed_quota,
         "months_on_plan":   months_on_plan,
         "proration":        proration,
         "prorated_variable": prorated_variable,
@@ -419,7 +419,7 @@ def build_excel(plan: dict, metrics: dict) -> bytes:
             ("",                   ""),
             ("Quota Rollup",       metrics["quota_rollup"]),
             ("Total Quota",        metrics["total_quota"]),
-            ("Prorated Quota",     metrics["prorated_quota"]),
+            ("Managed Quota",      metrics["managed_quota"]),
             ("Prorated Variable",  metrics["prorated_variable"]),
             ("Base Commission Rate", f"{metrics['base_rate']:.2%}"),
             ("",                   ""),
@@ -1111,7 +1111,7 @@ with tab_builder:
         m1.metric("Quota Rollup",     fmt_currency(metrics["quota_rollup"]))
         m2.metric("Total Quota",      fmt_currency(metrics["total_quota"]),
                   delta=f"×{quota_factor} factor")
-        m3.metric("Prorated Quota",   fmt_currency(metrics["prorated_quota"]),
+        m3.metric("Managed Quota",    fmt_currency(metrics["managed_quota"]),
                   delta=f"{metrics['months_on_plan']} mo / {metrics['proration']:.0%}")
 
         m4, m5, m6 = st.columns(3)
@@ -1218,7 +1218,7 @@ with tab_overview:
                 om1, om2, om3, om4 = st.columns(4)
                 om1.metric("Quota Rollup",   fmt_currency(metrics["quota_rollup"], cur))
                 om2.metric("Total Quota",    fmt_currency(metrics["total_quota"],  cur))
-                om3.metric("Prorated Quota", fmt_currency(metrics["prorated_quota"], cur))
+                om3.metric("Managed Quota",  fmt_currency(metrics["managed_quota"], cur))
                 om4.metric("Months on Plan", metrics["months_on_plan"])
 
                 oq1, oq2, oq3, oq4 = st.columns(4)
